@@ -106,13 +106,10 @@ def start_chrome_thread():
 
 if __name__ == '__main__':
     try:
-        # setup_gpio()
-        # start_thread()
         start_chrome_thread()
         print("**** Starting APP ****")
-        socketio.run(app, debug=True, host='0.0.0.0')
+        socketio.run(app, debug=False, host='0.0.0.0')
     except KeyboardInterrupt:
         print('KeyboardInterrupt exception is caught')
     finally:
-        pass
-        # GPIO.cleanup()
+        GPIO.cleanup()

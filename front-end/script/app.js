@@ -6,6 +6,7 @@ const listenToSocket = function () {
   socket.on("connect", function () {
     console.log("verbonden met socket webserver");
   });
+
 };
 
 document.addEventListener("DOMContentLoaded", function () {

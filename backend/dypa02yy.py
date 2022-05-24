@@ -30,8 +30,9 @@ try:
     while True:
 
         dist_data = get_distance_data()
-        dist = get_distance_value(dist_data)
-        print(f"{dist} mm")
+        if dist_data:
+            dist = get_distance_value(dist_data)
+            print(f"{dist} mm")
 
 
 except KeyboardInterrupt:
