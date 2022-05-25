@@ -11,12 +11,23 @@ class DataRepository:
         return gegevens
 
     @staticmethod
-    def read_one_device(deviceid):
+    def read_device(deviceid):
         sql = "SELECT * FROM device WHERE deviceid = %s"
         params = [deviceid]
         return Database.get_one_row(sql, params)
 
     @staticmethod
-    def read_all_devices():
+    def read_devices():
         sql = "SELECT * FROM device"
         return Database.get_rows(sql)
+
+    @staticmethod
+    def read_historiek():
+        sql = "SELECT * FROM historiek"
+        return Database.get_rows(sql)
+
+    @staticmethod
+    def insert_historiek(waarde, deviceid, commentaar=None):
+        sql = "INSERT INTO historiek (waarde, commentaar, deviceid, actieid) VALUES (%s, %s, %s, 1)"
+        params = [waarde, commentaar, deviceid]
+        return Database.execute_sql(sql, params)

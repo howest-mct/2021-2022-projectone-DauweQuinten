@@ -5,7 +5,7 @@ import threading
 
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit, send
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from repositories.DataRepository import DataRepository
 
 from selenium import webdriver
@@ -15,26 +15,6 @@ from selenium import webdriver
 
 # Code voor Hardware
 ser = serial.Serial('/dev/ttyS0')
-
-
-def get_distance_data():
-    data_bytes = []
-    data = ser.read()
-    int_data = int.from_bytes(data, "big")
-
-    if int_data == 0xff:
-        data_bytes.append(int_data)
-
-        for i in range(3):
-            int_data = int.from_bytes(ser.read(), "big")
-            data_bytes.append(int_data)
-        return data_bytes
-
-
-def get_distance_value(data):
-    data_h = data[1]
-    data_l = data[2]
-    return (data_h << 8) | data_l
 
 
 # Code voor Flask
@@ -52,6 +32,7 @@ def error_handler(e):
 
 
 # API ENDPOINTS
+endpoint = '/api/v1'
 
 
 @app.route('/')
@@ -59,10 +40,48 @@ def hallo():
     return "Server is running, er zijn momenteel geen API endpoints beschikbaar."
 
 
+@app.route(endpoint + '/devices/', methods=['GET'])
+def get_devices():
+    data = DataRepository.read_devices()
+    return jsonify(data), 200
+
+
+@app.route(endpoint + '/devices/<deviceid>/', methods=['GET'])
+def get_device(deviceid):
+    data = DataRepository.read_device(deviceid)
+    return jsonify(data), 200
+
+
+@app.route(endpoint + '/historiek/', methods=['GET', 'POST'])
+def get_historiek():
+    if request.method == "GET":
+        data = DataRepository.read_historiek()
+        return jsonify(data), 200
+    elif request.method == 'POST':
+        try:
+            data = DataRepository.json_or_formdata(request)
+            waarde = data['waarde']
+            deviceid = data['deviceid']
+            commentaar = data['commentaar']
+            result = DataRepository.insert_historiek(
+                waarde, deviceid, commentaar)
+            if result > 0:
+                return jsonify(status='OK'), 204
+            elif result == 0:
+                return jsonify(status='error'), 404
+        except Exception:
+            return jsonify(status='error'), 400
+
+
+# sockets
+
+
 @socketio.on('connect')
 def initial_connection():
     print('A new client connect')
 
+
+# threads
 
 def start_chrome_kiosk():
     import os
@@ -114,7 +133,28 @@ def start_main_thread():
     sensiThread.start()
 
 
-# ANDERE FUNCTIES
+# ANDRE FUNCTIES
+
+
+def get_distance_data():
+    data_bytes = []
+    data = ser.read()
+    int_data = int.from_bytes(data, "big")
+
+    if int_data == 0xff:
+        data_bytes.append(int_data)
+
+        for i in range(3):
+            int_data = int.from_bytes(ser.read(), "big")
+            data_bytes.append(int_data)
+        return data_bytes
+
+
+def get_distance_value(data):
+    data_h = data[1]
+    data_l = data[2]
+    return (data_h << 8) | data_l
+
 
 if __name__ == '__main__':
     try:

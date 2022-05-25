@@ -16,6 +16,7 @@ const showDistance = function(payload){
   const htmlDistance = document.querySelector('.js-distance')
   const distance = payload.value
   htmlDistance.innerHTML = `${distance} mm`
+
 }
 // #endregion
 
@@ -46,6 +47,8 @@ document.addEventListener("DOMContentLoaded", function () {
   console.info("DOM geladen");
   listenToSocket();
 });
+
+
 
 
 // #endregion
