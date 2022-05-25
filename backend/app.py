@@ -1,13 +1,12 @@
 import time
 import serial
 from RPi import GPIO
-from helpers.klasseknop import Button
 import threading
 
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit, send
 from flask import Flask, jsonify
-from backend.repositories.DataRepositoryVB import DataRepository
+from repositories.DataRepository import DataRepository
 
 from selenium import webdriver
 # from selenium import webdriver
@@ -92,12 +91,6 @@ def start_chrome_kiosk():
     driver = webdriver.Chrome(options=options)
     driver.get("http://localhost")
 
-    while True:
-        data = get_distance_data()
-        dist = get_distance_value(data)
-        # print(dist)
-        socketio.emit("B2F_ultrasonic_data", {"value": dist})
-
 
 def start_chrome_thread():
     print("**** Starting CHROME ****")
@@ -106,11 +99,27 @@ def start_chrome_thread():
     chromeThread.start()
 
 
+def start_main_loop():
+    while True:
+        data = get_distance_data()
+        dist = get_distance_value(data)
+        # print(dist)
+        socketio.emit("B2F_ultrasonic_data", {"value": dist})
+
+
+def start_main_thread():
+    print("**** Starting main code ****")
+    sensiThread = threading.Thread(
+        target=start_main_loop, args=(), daemon=True)
+    sensiThread.start()
+
+
 # ANDERE FUNCTIES
 
 if __name__ == '__main__':
     try:
         start_chrome_thread()
+        start_main_thread()
         print("**** Starting APP ****")
         socketio.run(app, debug=False, host='0.0.0.0')
 
