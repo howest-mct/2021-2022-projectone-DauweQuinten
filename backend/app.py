@@ -91,8 +91,12 @@ def start_chrome_kiosk():
 
     driver = webdriver.Chrome(options=options)
     driver.get("http://localhost")
+
     while True:
-        pass
+        data = get_distance_data()
+        dist = get_distance_value(data)
+        # print(dist)
+        socketio.emit("B2F_ultrasonic_data", {"value": dist})
 
 
 def start_chrome_thread():
@@ -109,6 +113,7 @@ if __name__ == '__main__':
         start_chrome_thread()
         print("**** Starting APP ****")
         socketio.run(app, debug=False, host='0.0.0.0')
+
     except KeyboardInterrupt:
         print('KeyboardInterrupt exception is caught')
     finally:
