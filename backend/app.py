@@ -60,11 +60,12 @@ def get_historiek():
     elif request.method == 'POST':
         try:
             data = DataRepository.json_or_formdata(request)
-            waarde = data['waarde']
+            value = data['value']
             deviceid = data['deviceid']
             commentaar = data['commentaar']
+
             result = DataRepository.insert_historiek(
-                waarde, deviceid, commentaar)
+                value, deviceid, commentaar)
             if result > 0:
                 return jsonify(status='OK'), 204
             elif result == 0:
@@ -121,9 +122,9 @@ def start_chrome_thread():
 def start_main_loop():
     while True:
         data = get_distance_data()
-        dist = get_distance_value(data)
-        # print(dist)
-        socketio.emit("B2F_ultrasonic_data", {"value": dist})
+        if(data):
+            dist = get_distance_value(data)
+            socketio.emit("B2F_ultrasonic_data", {"value": dist})
 
 
 def start_main_thread():
