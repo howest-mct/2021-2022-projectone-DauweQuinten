@@ -9,7 +9,6 @@ sw_level_max = 26
 
 
 def flow_puls_callback(pin):
-    print("puls detected")
     global pulsen
     pulsen += 1
     print(pulsen)
@@ -37,7 +36,6 @@ setup()
 try:
     while True:
         time.sleep(0.2)
-        print(GPIO.input(sw_level_max))
 
 
 except KeyboardInterrupt:
