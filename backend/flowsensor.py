@@ -5,6 +5,9 @@ flowsens = 20
 pulsen = 0
 
 
+sw_level_max = 26
+
+
 def flow_puls_callback(pin):
     print("puls detected")
     global pulsen
@@ -12,17 +15,29 @@ def flow_puls_callback(pin):
     print(pulsen)
 
 
-GPIO.setmode(GPIO.BCM)
+def max_level_callback(pin):
+    print("ALERT: Max level detected!")
 
-GPIO.setup(flowsens, GPIO.IN, GPIO.PUD_DOWN)
 
-GPIO.add_event_detect(flowsens, GPIO.RISING,
-                      flow_puls_callback, bouncetime=100)
+def setup():
+    GPIO.setmode(GPIO.BCM)
 
+    GPIO.setup(flowsens, GPIO.IN, GPIO.PUD_DOWN)
+    GPIO.setup(sw_level_max, GPIO.IN, GPIO.PUD_DOWN)
+
+    GPIO.add_event_detect(flowsens, GPIO.RISING,
+                          flow_puls_callback, bouncetime=20)
+
+    GPIO.add_event_detect(sw_level_max, GPIO.FALLING,
+                          max_level_callback, bouncetime=60)
+
+
+setup()
 
 try:
     while True:
         time.sleep(0.2)
+        print(GPIO.input(sw_level_max))
 
 
 except KeyboardInterrupt:
