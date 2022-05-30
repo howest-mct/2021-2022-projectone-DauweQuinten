@@ -11,24 +11,23 @@ class DataRepository:
         return gegevens
 
     @staticmethod
-    def read_status_lampen():
-        sql = "SELECT * from lampen"
-        return Database.get_rows(sql)
-
-    @staticmethod
-    def read_status_lamp_by_id(id):
-        sql = "SELECT * from lampen WHERE id = %s"
-        params = [id]
+    def read_device(deviceid):
+        sql = "SELECT * FROM device WHERE deviceid = %s"
+        params = [deviceid]
         return Database.get_one_row(sql, params)
 
     @staticmethod
-    def update_status_lamp(id, status):
-        sql = "UPDATE lampen SET status = %s WHERE id = %s"
-        params = [status, id]
-        return Database.execute_sql(sql, params)
+    def read_devices():
+        sql = "SELECT * FROM device"
+        return Database.get_rows(sql)
 
     @staticmethod
-    def update_status_alle_lampen(status):
-        sql = "UPDATE lampen SET status = %s"
-        params = [status]
+    def read_historiek():
+        sql = "SELECT * FROM historiek"
+        return Database.get_rows(sql)
+
+    @staticmethod
+    def insert_historiek(value, deviceid, commentaar=None):
+        sql = "INSERT INTO historiek (waarde, commentaar, deviceid, actieid) VALUES (%s, %s, %s, 1)"
+        params = [value, commentaar, deviceid]
         return Database.execute_sql(sql, params)
