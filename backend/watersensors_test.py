@@ -5,7 +5,6 @@ flowsens = 20
 pulsen = 0
 water_flow = 0
 
-
 sw_level_max = 26
 
 

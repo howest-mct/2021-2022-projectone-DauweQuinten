@@ -13,8 +13,12 @@ from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
 
 
-# Code voor Hardware
+# Code voor Hardware / global variables
 ser = serial.Serial('/dev/ttyS0')
+flowsens = 20
+pulsen = 0
+water_flow = 0
+sw_level_max = 26
 
 # Code voor Flask
 app = Flask(__name__)
@@ -122,6 +126,8 @@ def start_main_loop():
     prev_dist = 0
     sensitivity = 10
 
+    setup()
+
     while True:
         data = get_distance_data()
         if(data):
@@ -141,6 +147,18 @@ def start_main_thread():
 
 
 # ANDRE FUNCTIES
+
+def setup():
+    GPIO.setmode(GPIO.BCM)
+
+    GPIO.setup(flowsens, GPIO.IN, GPIO.PUD_DOWN)
+    GPIO.setup(sw_level_max, GPIO.IN, GPIO.PUD_DOWN)
+
+    GPIO.add_event_detect(flowsens, GPIO.RISING,
+                          flow_puls_callback, bouncetime=20)
+
+    GPIO.add_event_detect(sw_level_max, GPIO.FALLING,
+                          max_level_callback, bouncetime=60)
 
 
 def get_distance_data():
@@ -163,6 +181,24 @@ def get_distance_value(data):
     return (data_h << 8) | data_l
 
 
+# CALLBACKS
+
+
+def flow_puls_callback(pin):
+    global pulsen
+    global water_flow
+    pulsen += 1
+
+    water_flow = pulsen * 2.25
+
+    print(f"FLOW : {water_flow} ml")
+
+
+def max_level_callback(pin):
+    print("ALERT: Max level detected!")
+
+
+# MAIN
 if __name__ == '__main__':
     try:
         start_chrome_thread()
