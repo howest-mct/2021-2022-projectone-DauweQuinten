@@ -15,10 +15,16 @@ from selenium import webdriver
 
 # Code voor Hardware / global variables
 ser = serial.Serial('/dev/ttyS0')
+
+# GPIO flowsensor
 flowsens = 20
+
 pulsen = 0
 water_flow = 0
+
+# GPIO max level switch
 sw_level_max = 26
+
 
 # Code voor Flask
 app = Flask(__name__)
@@ -78,7 +84,6 @@ def get_historiek():
 
 
 # sockets
-
 
 @socketio.on('connect')
 def initial_connection():
@@ -182,7 +187,6 @@ def get_distance_value(data):
 
 
 # CALLBACKS
-
 
 def flow_puls_callback(pin):
     global pulsen
