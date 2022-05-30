@@ -3,6 +3,7 @@ import time
 
 flowsens = 20
 pulsen = 0
+water_flow = 0
 
 
 sw_level_max = 26
@@ -10,8 +11,12 @@ sw_level_max = 26
 
 def flow_puls_callback(pin):
     global pulsen
+    global water_flow
     pulsen += 1
-    print(pulsen)
+
+    water_flow = pulsen * 2.25
+
+    print(f"FLOW : {water_flow} ml")
 
 
 def max_level_callback(pin):
