@@ -13,15 +13,15 @@ const showDistance = function (payload) {
   const distance = payload.value;
   htmlDistance.innerHTML = `${distance} mm`;
 
-  const body = JSON.stringify({
-    value: distance,
-    deviceid: 1,
-    commentaar: 'level measurement',
-  });
+  // const body = JSON.stringify({
+  //   value: distance,
+  //   deviceid: 1,
+  //   commentaar: 'level measurement',
+  // });
 
-  const url = `http://192.168.168.169:5000/api/v1/historiek/`;
+  // const url = `http://192.168.168.169:5000/api/v1/historiek/`;
 
-  handleData(url, callbackLevelMeasurement, null, 'POST', body);
+  // handleData(url, callbackLevelMeasurement, null, 'POST', body);
 };
 // #endregion
 

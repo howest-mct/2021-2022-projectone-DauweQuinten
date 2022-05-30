@@ -16,7 +16,6 @@ from selenium import webdriver
 # Code voor Hardware
 ser = serial.Serial('/dev/ttyS0')
 
-
 # Code voor Flask
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'geheim!'
@@ -120,11 +119,18 @@ def start_chrome_thread():
 
 
 def start_main_loop():
+    prev_dist = 0
+    sensitivity = 10
+
     while True:
         data = get_distance_data()
         if(data):
             dist = get_distance_value(data)
             socketio.emit("B2F_ultrasonic_data", {"value": dist})
+
+            if not (prev_dist - sensitivity < dist < prev_dist + sensitivity):
+                DataRepository.insert_historiek(dist, 1, "level measurement")
+                prev_dist = dist
 
 
 def start_main_thread():
