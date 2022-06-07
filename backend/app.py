@@ -139,6 +139,7 @@ def start_chrome_thread():
 
 def start_main_loop():
 
+    global water_flow
     prev_dist = 0
     sensitivity = 10
 
@@ -177,6 +178,9 @@ def start_main_loop():
             if valve_state != prev_valve_state:
                 GPIO.output(ventiel, 0)
                 DataRepository.insert_historiek(0, 4, 2, "vullen gestopt")
+                DataRepository.insert_historiek(
+                    water_flow, 3, 1, "Hoeveelheid water bijgevuld")
+                water_flow = 0
                 prev_valve_state = valve_state
 
 
@@ -257,6 +261,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print('KeyboardInterrupt exception is caught')
     finally:
+        GPIO.output(ventiel, 0)
         GPIO.cleanup()
 
 # endregion
