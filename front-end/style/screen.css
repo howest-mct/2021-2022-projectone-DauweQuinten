@@ -426,10 +426,19 @@ a:focus {
 \*------------------------------------*/
 
 /*
-    Component: Component name
+    Component: header
     ---
-    Component description
+    Main header of the website
 */
+
+.c-header{
+    background-color: #007AB3;
+    color: white;
+    padding-top: 14px;
+    padding-bottom: 14px;
+
+}
+
 
 /*------------------------------------*\
   #UTILITIES

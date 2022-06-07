@@ -23,6 +23,7 @@ water_flow = 0
 
 # GPIO max level switch
 sw_level_max = 26
+emergency_stop = False
 
 
 # GPIO ventiel
@@ -147,8 +148,8 @@ def start_main_loop():
 
     # region configuratie
 
-    min_level = 500
-    max_level = 1000
+    min_level = 1000
+    max_level = 500
 
     # endregion
 
@@ -165,14 +166,13 @@ def start_main_loop():
                     dist, 1, 1, "level measurement")
                 prev_dist = dist
 
-        if dist < min_level:
+        if dist > min_level and not emergency_stop:
             valve_state = 1
-
             if valve_state != prev_valve_state:
                 DataRepository.insert_historiek(1, 4, 2, "vullen gestart")
                 prev_valve_state = valve_state
 
-        if dist > max_level:
+        if (dist < max_level) or emergency_stop:
             valve_state = 0
             if valve_state != prev_valve_state:
                 DataRepository.insert_historiek(0, 4, 2, "vullen gestopt")
@@ -246,21 +246,10 @@ def flow_puls_callback(pin):
 
 def max_level_callback(pin):
 
-    # ONDERSTAANDE BEST IN FUNCTIE ZETTEN? -> HERBRUIKBAAR
-
-    # global valve_state
-    # global water_flow
-
-    # valve_state = 0
-    # if valve_state != prev_valve_state:
-    #     GPIO.output(ventiel, 0)
-    #     DataRepository.insert_historiek(0, 4, 2, "vullen gestopt")
-    #     DataRepository.insert_historiek(
-    #         water_flow, 3, 1, "Hoeveelheid water bijgevuld")
-    #     water_flow = 0
-    #     prev_valve_state = valve_state
-
+    global emergency_stop
     print("ALERT: Max level detected!")
+    emergency_stop = True
+    DataRepository.insert_historiek(1, 2, 1, "Max level detected")
 
 
 # endregion
