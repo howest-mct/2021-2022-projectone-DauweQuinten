@@ -2,6 +2,28 @@
   #FONTS
 \*------------------------------------*/
 
+@font-face {
+    font-family: 'Inter Web';
+    font-weight: 400;
+    src: url('../fonts/Inter-Regular.woff2') format('woff2');
+  }
+  
+
+  @font-face {
+    font-family: 'Inter Web';
+    font-weight: 500;
+    src: url('../fonts/Inter-Medium.woff2') format('woff2');
+  }
+
+
+  @font-face {
+    font-family: 'Inter Web';
+    font-weight: 600;
+    src: url('../fonts/Inter-SemiBold.woff2') format('woff2');
+  }
+
+
+
 /*------------------------------------*\
   #GENERIC
 \*------------------------------------*/
@@ -13,10 +35,10 @@
 */
 
 html {
-    font-size: 16px;
+    font-size: 20px;
     line-height: 1.5;
-    font-family: "Helvetica Neue", Helvetica, arial, sans-serif;
-    color: #111;
+    font-family: "Inter Web", Helvetica, arial, sans-serif;
+    color: #15181A;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     box-sizing: border-box;
@@ -36,7 +58,7 @@ html {
  */
 
 ::selection {
-    background: #e85e00;
+    background: #005780;
     color: white;
     text-shadow: none;
 }
@@ -136,18 +158,18 @@ hr {
 }
 
 a {
-    color: RoyalBlue;
+    color: #20B9FF;
     transition: all .1s ease-in-out;
 }
 
 a:visited,
 a:active {
-    color: BlueViolet;
+    color: #007AB3;
 }
 
 a:hover,
 a:focus {
-    color: Crimson;
+    color: #007AB3;
 }
 
 /*------------------------------------*\
