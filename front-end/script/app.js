@@ -12,17 +12,8 @@ const showDistance = function (payload) {
   const htmlDistance = document.querySelector('.js-distance');
   const distance = payload.value;
   htmlDistance.innerHTML = `${distance} mm`;
-
-  const body = JSON.stringify({
-    value: distance,
-    deviceid: 1,
-    commentaar: 'level measurement',
-  });
-
-  const url = `http://192.168.168.169:5000/api/v1/historiek/`;
-
-  handleData(url, callbackLevelMeasurement, null, 'POST', body);
 };
+
 // #endregion
 
 // #region ***  Callback-No Visualisation - callback___  ***********
