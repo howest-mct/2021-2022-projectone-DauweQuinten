@@ -169,19 +169,19 @@ def start_main_loop():
             valve_state = 1
 
             if valve_state != prev_valve_state:
-                GPIO.output(ventiel, 1)
                 DataRepository.insert_historiek(1, 4, 2, "vullen gestart")
                 prev_valve_state = valve_state
 
         if dist > max_level:
             valve_state = 0
             if valve_state != prev_valve_state:
-                GPIO.output(ventiel, 0)
                 DataRepository.insert_historiek(0, 4, 2, "vullen gestopt")
                 DataRepository.insert_historiek(
                     water_flow, 3, 1, "Hoeveelheid water bijgevuld")
                 water_flow = 0
                 prev_valve_state = valve_state
+
+        GPIO.output(ventiel, valve_state)
 
 
 def start_main_thread():
