@@ -13,12 +13,11 @@ from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
 
 
-# Code voor Hardware / global variables
+# region global code voor Hardware
 ser = serial.Serial('/dev/ttyS0')
 
 # GPIO flowsensor
 flowsens = 20
-
 pulsen = 0
 water_flow = 0
 
@@ -26,7 +25,13 @@ water_flow = 0
 sw_level_max = 26
 
 
-# Code voor Flask
+# GPIO ventiel
+ventiel = 21
+
+
+# endregion
+
+# region Code voor Flask
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'geheim!'
 socketio = SocketIO(app, cors_allowed_origins="*", logger=False,
@@ -34,13 +39,9 @@ socketio = SocketIO(app, cors_allowed_origins="*", logger=False,
 
 CORS(app)
 
+# endregion
 
-@socketio.on_error()        # Handles the default namespace
-def error_handler(e):
-    print(e)
-
-
-# API ENDPOINTS
+# region API ENDPOINTS
 endpoint = '/api/v1'
 
 
@@ -82,15 +83,24 @@ def get_historiek():
         except Exception:
             return jsonify(status='error'), 400
 
+# endregion
 
-# sockets
+# region sockets
+
+
+@socketio.on_error()        # Handles the default namespace
+def error_handler(e):
+    print(e)
+
 
 @socketio.on('connect')
 def initial_connection():
     print('A new client connect')
 
+# endregion
 
-# threads
+# region threads
+
 
 def start_chrome_kiosk():
     import os
@@ -128,8 +138,18 @@ def start_chrome_thread():
 
 
 def start_main_loop():
+
     prev_dist = 0
     sensitivity = 10
+
+    prev_valve_state = 0
+
+    # region configuratie
+
+    min_level = 500
+    max_level = 1000
+
+    # endregion
 
     setup()
 
@@ -140,8 +160,24 @@ def start_main_loop():
             socketio.emit("B2F_ultrasonic_data", {"value": dist})
 
             if not (prev_dist - sensitivity < dist < prev_dist + sensitivity):
-                DataRepository.insert_historiek(dist, 1, "level measurement")
+                DataRepository.insert_historiek(
+                    dist, 1, 1, "level measurement")
                 prev_dist = dist
+
+        if dist < min_level:
+            valve_state = 1
+
+            if valve_state != prev_valve_state:
+                GPIO.output(ventiel, 1)
+                DataRepository.insert_historiek(1, 4, 2, "vullen gestart")
+                prev_valve_state = valve_state
+
+        if dist > max_level:
+            valve_state = 0
+            if valve_state != prev_valve_state:
+                GPIO.output(ventiel, 0)
+                DataRepository.insert_historiek(0, 4, 2, "vullen gestopt")
+                prev_valve_state = valve_state
 
 
 def start_main_thread():
@@ -150,8 +186,10 @@ def start_main_thread():
         target=start_main_loop, args=(), daemon=True)
     sensiThread.start()
 
+# endregion
 
-# ANDRE FUNCTIES
+# region ANDRE FUNCTIES
+
 
 def setup():
     GPIO.setmode(GPIO.BCM)
@@ -164,6 +202,8 @@ def setup():
 
     GPIO.add_event_detect(sw_level_max, GPIO.FALLING,
                           max_level_callback, bouncetime=60)
+
+    GPIO.setup(ventiel, GPIO.OUT)
 
 
 def get_distance_data():
@@ -185,8 +225,10 @@ def get_distance_value(data):
     data_l = data[2]
     return (data_h << 8) | data_l
 
+# endregion
 
-# CALLBACKS
+# region CALLBACKS
+
 
 def flow_puls_callback(pin):
     global pulsen
@@ -201,8 +243,10 @@ def flow_puls_callback(pin):
 def max_level_callback(pin):
     print("ALERT: Max level detected!")
 
+# endregion
 
-# MAIN
+
+# region MAIN
 if __name__ == '__main__':
     try:
         start_chrome_thread()
@@ -214,3 +258,5 @@ if __name__ == '__main__':
         print('KeyboardInterrupt exception is caught')
     finally:
         GPIO.cleanup()
+
+# endregion
