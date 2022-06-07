@@ -245,7 +245,23 @@ def flow_puls_callback(pin):
 
 
 def max_level_callback(pin):
+
+    # ONDERSTAANDE BEST IN FUNCTIE ZETTEN? -> HERBRUIKBAAR
+
+    # global valve_state
+    # global water_flow
+
+    # valve_state = 0
+    # if valve_state != prev_valve_state:
+    #     GPIO.output(ventiel, 0)
+    #     DataRepository.insert_historiek(0, 4, 2, "vullen gestopt")
+    #     DataRepository.insert_historiek(
+    #         water_flow, 3, 1, "Hoeveelheid water bijgevuld")
+    #     water_flow = 0
+    #     prev_valve_state = valve_state
+
     print("ALERT: Max level detected!")
+
 
 # endregion
 
