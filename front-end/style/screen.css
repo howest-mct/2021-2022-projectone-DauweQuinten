@@ -2,28 +2,6 @@
   #FONTS
 \*------------------------------------*/
 
-@font-face {
-    font-family: 'Inter Web';
-    font-weight: 400;
-    src: url('../fonts/Inter-Regular.woff2') format('woff2');
-  }
-  
-
-  @font-face {
-    font-family: 'Inter Web';
-    font-weight: 500;
-    src: url('../fonts/Inter-Medium.woff2') format('woff2');
-  }
-
-
-  @font-face {
-    font-family: 'Inter Web';
-    font-weight: 600;
-    src: url('../fonts/Inter-SemiBold.woff2') format('woff2');
-  }
-
-
-
 /*------------------------------------*\
   #GENERIC
 \*------------------------------------*/
@@ -35,13 +13,13 @@
 */
 
 html {
-    font-size: 20px;
+    font-size: 16px;
     line-height: 1.5;
-    font-family: "Inter Web", Helvetica, arial, sans-serif;
-    color: #15181A;
+    font-family: Helvetica, arial, sans-serif;
+    color: #111;
+    box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    box-sizing: border-box;
 }
 
 *,
@@ -58,7 +36,7 @@ html {
  */
 
 ::selection {
-    background: #005780;
+    background: #e85e00;
     color: white;
     text-shadow: none;
 }
@@ -84,28 +62,34 @@ img {
     Default markup for typographic elements
 */
 
+h1,
+h2,
+h3 {
+    font-weight: 700;
+}
+
 h1 {
     font-size: 36px;
-    line-height: 40px;
+    line-height: 48px;
     margin: 0 0 24px;
 }
 
 h2 {
-    font-size: 23px;
-    line-height: 32px;
+    font-size: 32px;
+    line-height: 40px;
     margin: 0 0 24px;
 }
 
 h3 {
-    font-size: 18px;
-    line-height: 24px;
+    font-size: 26px;
+    line-height: 32px;
     margin: 0 0 24px;
 }
 
 h4,
 h5,
 h6 {
-    font-size: 16px;
+    font-size: 20px;
     line-height: 24px;
     margin: 0 0 24px;
 }
@@ -131,11 +115,10 @@ li ol {
 }
 
 blockquote {
-    font-style: italic;
+    font-style: normal;
     font-size: 23px;
     line-height: 32px;
     margin: 0 0 24px;
-    font-family: "Times New Roman", serif;
 }
 
 blockquote * {
@@ -144,10 +127,10 @@ blockquote * {
 }
 
 figcaption {
+    font-weight: 400;
     font-size: 12px;
     line-height: 16px;
-    padding-top: 8px;
-    color: Grey;
+    margin-top: 8px;
 }
 
 hr {
@@ -158,18 +141,18 @@ hr {
 }
 
 a {
-    color: #20B9FF;
+    color: RoyalBlue;
     transition: all .1s ease-in-out;
 }
 
 a:visited,
 a:active {
-    color: #007AB3;
+    color: BlueViolet;
 }
 
 a:hover,
 a:focus {
-    color: #007AB3;
+    color: Crimson;
 }
 
 /*------------------------------------*\
@@ -183,6 +166,7 @@ a:focus {
 */
 
 .o-row {
+    position: relative;
     padding: 24px 24px 0;
     display: flow-root;
 }
@@ -233,8 +217,7 @@ a:focus {
     margin-left: auto;
     margin-right: auto;
     width: 100%;
-    max-width: 90em;
-    /* 90 * 16px = 1440px */
+    max-width: 90em; /* 90 * 16px = 1440px */
 }
 
 /*
@@ -247,20 +230,19 @@ a:focus {
     display: flow-root;
 }
 
-.o-section+.o-section {
+.o-section + .o-section {
     margin-top: 24px;
 }
 
 @media (min-width: 768px) {
-
-    .o-section--lg+.o-section--lg,
-    .o-section--xl+.o-section--xl {
+    .o-section--lg + .o-section--lg,
+    .o-section--xl + .o-section--xl {
         margin-top: 48px;
     }
 }
 
 @media (min-width: 1200px) {
-    .o-section--xl+.o-section--xl {
+    .o-section--xl + .o-section--xl {
         margin-top: 72px;
     }
 }
@@ -278,9 +260,9 @@ a:focus {
     flex-wrap: wrap;
 }
 
-.o-layout__item {
-    flex-basis: 100%;
-}
+    .o-layout__item {
+        flex-basis: 100%;
+    }
 
 /* gutter modifiers, these affect o-layout__item too */
 
@@ -288,7 +270,7 @@ a:focus {
     margin: 0 -12px;
 }
 
-.o-layout--gutter>.o-layout__item {
+.o-layout--gutter > .o-layout__item {
     padding: 0 12px;
 }
 
@@ -296,7 +278,7 @@ a:focus {
     margin: 0 -6px;
 }
 
-.o-layout--gutter-sm>.o-layout__item {
+.o-layout--gutter-sm > .o-layout__item {
     padding: 0 6px;
 }
 
@@ -304,8 +286,16 @@ a:focus {
     margin: 0 -24px;
 }
 
-.o-layout--gutter-lg>.o-layout__item {
+.o-layout--gutter-lg > .o-layout__item {
     padding: 0 24px;
+}
+
+.o-layout--gutter-xl {
+    margin: 0 -48px;
+}
+
+.o-layout--gutter-xl > .o-layout__item {
+    padding: 0 48px;
 }
 
 /* reverse horizontal row modifier */
@@ -358,7 +348,7 @@ a:focus {
     align-items: baseline;
 }
 
-/* Vertical alignment modifiers that only work if there is one than one flex item */
+/* Vertical alignment modifiers that only work if there is more than one flex item */
 
 .o-layout--align-content-start {
     align-content: start;
@@ -379,7 +369,6 @@ a:focus {
 .o-layout--align-content-space-between {
     align-content: space-between;
 }
-
 
 /*
     Objects: List
@@ -431,13 +420,65 @@ a:focus {
     Main header of the website
 */
 
+
 .c-header{
     background-color: #007AB3;
-    color: white;
-    padding-top: 14px;
-    padding-bottom: 14px;
-
+    height: 80px;
+    width: 100%
 }
+
+
+
+/*
+    Component: header
+    ---
+    Navigation of the website
+*/
+
+
+.c-nav{
+    padding: 0;
+    margin: 0;
+    text-decoration: none;
+    list-style: none;
+    box-sizing: border-box;
+    float: right;
+    margin-right: 20px;
+}
+
+.c-nav__link{
+    text-decoration: none;
+    color: white
+}
+
+.c-nav__link:visited{
+    text-decoration: none;
+    color: white
+}
+
+
+.c-nav__link:hover{
+    text-decoration: none;
+    color: #D4F1FF;
+}
+
+.c-nav__item{
+    display: inline-block;
+    margin: 0 5px;
+}
+
+/*
+    Component: c-logo
+    ---
+    Logo of the website
+*/
+
+.c-logo{
+    color: white;
+}
+
+
+
 
 
 /*------------------------------------*\
@@ -484,20 +525,20 @@ a:focus {
     Utility classes to put specific max widths onto elements
 */
 
+.u-max-width-xs {
+    max-width: 18em !important;
+}
+
 .u-max-width-sm {
-    max-width: 36em !important;
+    max-width: 39em !important;
 }
 
 .u-max-width-md {
-    max-width: 45em !important;
+    max-width: 50em !important;
 }
 
 .u-max-width-lg {
-    max-width: 60em !important;
-}
-
-.u-max-width-xl {
-    max-width: 75em !important;
+    max-width: 63.5em !important;
 }
 
 .u-max-width-none {
@@ -567,43 +608,33 @@ a:focus {
     .u-1-of-2-bp1 {
         flex-basis: calc(100% / 2) !important;
     }
-
     .u-1-of-3-bp1 {
         flex-basis: calc(100% / 3) !important;
     }
-
     .u-2-of-3-bp1 {
         flex-basis: calc(100% / 3 * 2) !important;
     }
-
     .u-1-of-4-bp1 {
         flex-basis: calc(100% / 4) !important;
     }
-
     .u-3-of-4-bp1 {
         flex-basis: calc(100% / 4 * 3) !important;
     }
-
     .u-1-of-5-bp1 {
         flex-basis: calc(100% / 5) !important;
     }
-
     .u-2-of-5-bp1 {
         flex-basis: calc(100% / 5 * 2) !important;
     }
-
     .u-3-of-5-bp1 {
         flex-basis: calc(100% / 5 * 3) !important;
     }
-
     .u-4-of-5-bp1 {
         flex-basis: calc(100% / 5 * 4) !important;
     }
-
     .u-1-of-6-bp1 {
         flex-basis: calc(100% / 6) !important;
     }
-
     .u-5-of-6-bp1 {
         flex-basis: calc(100% / 6 * 5) !important;
     }
@@ -613,43 +644,33 @@ a:focus {
     .u-1-of-2-bp2 {
         flex-basis: calc(100% / 2) !important;
     }
-
     .u-1-of-3-bp2 {
         flex-basis: calc(100% / 3) !important;
     }
-
     .u-2-of-3-bp2 {
         flex-basis: calc(100% / 3 * 2) !important;
     }
-
     .u-1-of-4-bp2 {
         flex-basis: calc(100% / 4) !important;
     }
-
     .u-3-of-4-bp2 {
         flex-basis: calc(100% / 4 * 3) !important;
     }
-
     .u-1-of-5-bp2 {
         flex-basis: calc(100% / 5) !important;
     }
-
     .u-2-of-5-bp2 {
         flex-basis: calc(100% / 5 * 2) !important;
     }
-
     .u-3-of-5-bp2 {
         flex-basis: calc(100% / 5 * 3) !important;
     }
-
     .u-4-of-5-bp2 {
         flex-basis: calc(100% / 5 * 4) !important;
     }
-
     .u-1-of-6-bp2 {
         flex-basis: calc(100% / 6) !important;
     }
-
     .u-5-of-6-bp2 {
         flex-basis: calc(100% / 6 * 5) !important;
     }
@@ -659,43 +680,33 @@ a:focus {
     .u-1-of-2-bp3 {
         flex-basis: calc(100% / 2) !important;
     }
-
     .u-1-of-3-bp3 {
         flex-basis: calc(100% / 3) !important;
     }
-
     .u-2-of-3-bp3 {
         flex-basis: calc(100% / 3 * 2) !important;
     }
-
     .u-1-of-4-bp3 {
         flex-basis: calc(100% / 4) !important;
     }
-
     .u-3-of-4-bp3 {
         flex-basis: calc(100% / 4 * 3) !important;
     }
-
     .u-1-of-5-bp3 {
         flex-basis: calc(100% / 5) !important;
     }
-
     .u-2-of-5-bp3 {
         flex-basis: calc(100% / 5 * 2) !important;
     }
-
     .u-3-of-5-bp3 {
         flex-basis: calc(100% / 5 * 3) !important;
     }
-
     .u-4-of-5-bp3 {
         flex-basis: calc(100% / 5 * 4) !important;
     }
-
     .u-1-of-6-bp3 {
         flex-basis: calc(100% / 6) !important;
     }
-
     .u-5-of-6-bp3 {
         flex-basis: calc(100% / 6 * 5) !important;
     }
@@ -705,43 +716,33 @@ a:focus {
     .u-1-of-2-bp4 {
         flex-basis: calc(100% / 2) !important;
     }
-
     .u-1-of-3-bp4 {
         flex-basis: calc(100% / 3) !important;
     }
-
     .u-2-of-3-bp4 {
         flex-basis: calc(100% / 3 * 2) !important;
     }
-
     .u-1-of-4-bp4 {
         flex-basis: calc(100% / 4) !important;
     }
-
     .u-3-of-4-bp4 {
         flex-basis: calc(100% / 4 * 3) !important;
     }
-
     .u-1-of-5-bp4 {
         flex-basis: calc(100% / 5) !important;
     }
-
     .u-2-of-5-bp4 {
         flex-basis: calc(100% / 5 * 2) !important;
     }
-
     .u-3-of-5-bp4 {
         flex-basis: calc(100% / 5 * 3) !important;
     }
-
     .u-4-of-5-bp4 {
         flex-basis: calc(100% / 5 * 4) !important;
     }
-
     .u-1-of-6-bp4 {
         flex-basis: calc(100% / 6) !important;
     }
-
     .u-5-of-6-bp4 {
         flex-basis: calc(100% / 6 * 5) !important;
     }
@@ -759,31 +760,25 @@ a:focus {
 */
 
 @media print {
-
     *,
     *:before,
     *:after {
         background: transparent !important;
         color: #000 !important;
-        /* Black prints faster:
-                                   http://www.sanbeiji.com/archives/953 */
+        /* Black prints faster: http://www.sanbeiji.com/archives/953 */
         box-shadow: none !important;
         text-shadow: none !important;
     }
-
     a,
     a:visited {
         text-decoration: underline;
     }
-
     a[href]:after {
         content: " (" attr(href) ")";
     }
-
     abbr[title]:after {
         content: " (" attr(title) ")";
     }
-
     /*
      * Don't show links that are fragment identifiers,
      * or use the `javascript:` pseudo protocol
@@ -792,17 +787,14 @@ a:focus {
     a[href^="javascript:"]:after {
         content: "";
     }
-
     pre {
         white-space: pre-wrap !important;
     }
-
     pre,
     blockquote {
         border: 1px solid #999;
         page-break-inside: avoid;
     }
-
     /*
      * Printing Tables:
      * http://css-discuss.incutio.com/wiki/Printing_Tables
@@ -810,19 +802,16 @@ a:focus {
     thead {
         display: table-header-group;
     }
-
     tr,
     img {
         page-break-inside: avoid;
     }
-
     p,
     h2,
     h3 {
         orphans: 3;
         widows: 3;
     }
-
     h2,
     h3 {
         page-break-after: avoid;
