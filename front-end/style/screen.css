@@ -446,9 +446,25 @@ a:focus {
     margin-right: 20px;
 }
 
+@media(max-width: 858px){
+    .c-nav{
+        position: fixed;
+        width:75%;
+        height: 100vh;
+        background: #005780;
+        top: 80px;
+        left: -100%;
+        text-align: center;
+        transition: 0.5s;
+    }
+}
+
+
 .c-nav__link{
     text-decoration: none;
-    color: white
+    color: white;
+    padding: 7px 13px;
+    border-radius: 5px;
 }
 
 .c-nav__link:visited{
@@ -457,14 +473,29 @@ a:focus {
 }
 
 
-.c-nav__link:hover{
-    text-decoration: none;
-    color: #D4F1FF;
+.c-nav__link.active, .c-nav__link:hover{
+    background: #20B9FF;
+    transition: 0.5s;
+}
+
+@media(max-width: 858px){
+    .c-nav__link.active, .c-nav__link:hover{
+        background: none;
+        color: #20B9FF
+    }
 }
 
 .c-nav__item{
     display: inline-block;
     margin: 0 5px;
+    line-height: 80px;
+}
+
+@media(max-width: 858px){
+    .c-nav__item{
+        display: block;
+        
+    }
 }
 
 /*
@@ -475,9 +506,40 @@ a:focus {
 
 .c-logo{
     color: white;
+    font-size: 36px;
+    padding: 0 100px
 }
 
 
+/*
+    Component: c-hamburger
+    ---
+    Mobile hamburger menu
+*/
+
+.c-hamburger{
+    font-size: 30px;
+    color: white;
+    float: right;
+    line-height: 80px;
+    margin-right: 40px;
+    cursor: pointer;
+    display: None;
+}
+
+@media(max-width: 858px){
+    .c-hamburger{
+        display: block
+    }
+}
+
+.c-hamburger__check{
+    display: none;
+}
+
+.c-hamburger__check:checked ~ .c-nav{
+    left: 0;
+}
 
 
 
