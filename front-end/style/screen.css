@@ -2,6 +2,26 @@
   #FONTS
 \*------------------------------------*/
 
+@font-face {
+    font-family: 'Inter Web';
+    font-weight: 400;
+    src: url('../fonts/Inter-Regular.woff2') format('woff2');
+  }
+
+@font-face {
+  font-family: 'Inter Web';
+  font-weight: 500;
+  src: url('../fonts/Inter-Medium.woff2') format('woff2');
+}
+
+
+@font-face {
+    font-family: 'Inter Web';
+    font-weight: 600;
+    src: url('../fonts/Inter-SemiBold.woff2') format('woff2');
+  }
+
+
 /*------------------------------------*\
   #GENERIC
 \*------------------------------------*/
@@ -15,7 +35,7 @@
 html {
     font-size: 16px;
     line-height: 1.5;
-    font-family: Helvetica, arial, sans-serif;
+    font-family: 'Inter Web', arial, sans-serif;
     color: #111;
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
@@ -36,7 +56,7 @@ html {
  */
 
 ::selection {
-    background: #e85e00;
+    background: #007AB3;
     color: white;
     text-shadow: none;
 }
@@ -494,7 +514,7 @@ a:focus {
 @media(max-width: 858px){
     .c-nav__item{
         display: block;
-        
+
     }
 }
 
