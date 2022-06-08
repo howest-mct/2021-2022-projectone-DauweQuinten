@@ -14,7 +14,6 @@ const showDistance = function (payload) {
   // htmlDistance.innerHTML = `${distance} mm`;
 
   procent = 100 - (100 / 2000) * distance;
-  console.info(procent);
   chart.updateSeries([procent]);
 };
 
@@ -96,7 +95,7 @@ const drawChart = function () {
     stroke: {
       lineCap: 'round',
     },
-    labels: ['Percent'],
+    labels: ['procent'],
   };
 
   chart = new ApexCharts(document.querySelector('.js-level-chart'), options);
