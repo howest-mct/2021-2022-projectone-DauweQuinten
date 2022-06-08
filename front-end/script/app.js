@@ -2,21 +2,25 @@
 
 const lanIP = `${window.location.hostname}:5000`;
 const socket = io(`http://${lanIP}`);
+let chart;
 
 // #endregion
 
 // #region ***  Callback-Visualisation - show___         ***********
 
 const showDistance = function (payload) {
-  console.info(payload);
   const htmlDistance = document.querySelector('.js-distance');
   const distance = payload.value;
-  htmlDistance.innerHTML = `${distance} mm`;
+  // htmlDistance.innerHTML = `${distance} mm`;
+
+  procent = 100 - (100 / 2000) * distance;
+  console.info(procent);
+  chart.updateSeries([procent]);
 };
 
 const drawChart = function () {
   var options = {
-    series: [70],
+    series: [65],
     chart: {
       height: 350,
       type: 'radialBar',
@@ -95,10 +99,7 @@ const drawChart = function () {
     labels: ['Percent'],
   };
 
-  var chart = new ApexCharts(
-    document.querySelector('.js-level-chart'),
-    options
-  );
+  chart = new ApexCharts(document.querySelector('.js-level-chart'), options);
   chart.render();
 };
 
@@ -134,8 +135,8 @@ const listenToSocket = function () {
 
 document.addEventListener('DOMContentLoaded', function () {
   console.info('DOM geladen');
-  listenToSocket();
   drawChart();
+  listenToSocket();
 });
 
 // #endregion

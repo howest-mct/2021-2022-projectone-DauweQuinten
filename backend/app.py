@@ -144,6 +144,7 @@ def start_main_loop():
     prev_dist = 0
     sensitivity = 10
 
+    valve_state = 0
     prev_valve_state = 0
 
     # region configuratie
