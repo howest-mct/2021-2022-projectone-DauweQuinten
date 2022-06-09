@@ -280,9 +280,13 @@ a:focus {
     flex-wrap: wrap;
 }
 
-    .o-layout__item {
-        flex-basis: 100%;
-    }
+.o-flex-column{
+    flex-direction: column;
+}
+
+.o-layout__item {
+    flex-basis: 100%;
+}
 
 /* gutter modifiers, these affect o-layout__item too */
 
@@ -469,6 +473,7 @@ a:focus {
 @media(max-width: 858px){
     .c-nav{
         position: fixed;
+        z-index: 1;
         width:75%;
         height: 100vh;
         background: #005780;
@@ -527,8 +532,15 @@ a:focus {
 .c-logo{
     color: white;
     font-size: 36px;
-    padding: 0 100px
+    padding: 0 50px
 }
+
+@media(max-width: 858px){
+    .c-logo{
+        padding: 25px;
+    }
+}
+
 
 
 /*
@@ -560,6 +572,37 @@ a:focus {
 .c-hamburger__check:checked ~ .c-nav{
     left: 0;
 }
+
+
+.c-fill-btn{
+    padding: 0 95px;
+    background-color: #D4F1FF;
+    color: #005780;
+    border-radius: 24px;
+    border-style: none;
+    box-shadow: 2px 8px 5px rgba(0, 0, 0, 0.1);
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 48px;
+    text-transform: uppercase;
+    box-sizing: border-box;
+    text-align: center;
+    vertical-align: middle;
+}
+
+
+
+
+.c-fill-btn--active{
+    background-color: #007AB3;
+    color: white;
+    padding: 0px 40px;
+}
+
+.c-fill-btn--active > .c-fill-btn__svg{
+    fill: white;
+}
+
 
 
 
@@ -829,6 +872,8 @@ a:focus {
         flex-basis: calc(100% / 6 * 5) !important;
     }
 }
+
+
 
 /*------------------------------------*\
   #MEDIA
