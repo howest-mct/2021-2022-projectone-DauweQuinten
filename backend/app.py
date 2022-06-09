@@ -105,13 +105,17 @@ def initial_connection():
 
 @socketio.on('F2B_switch_valve')
 def switch_valve(payload):
-    global valve_state
+    # global valve_state
     print(payload)
     state = payload['state']
+    DataRepository.insert_historiek(state, 4, 2, "manueel bediend")
     DataRepository.update_device_state(4, state)
 
-    DataRepository.insert_historiek(state, 4, 2, "manueel bediend")
-    valve_state = state
+    response = DataRepository.read_device_state(4)
+    new_state = response['status']
+    emit("B2F_switched_valve", {'state': new_state})
+
+    # valve_state = state
 
     if state == 0:
         DataRepository.insert_historiek(

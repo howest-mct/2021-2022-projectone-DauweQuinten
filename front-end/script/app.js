@@ -195,6 +195,16 @@ const listenToSocket = function () {
     }
   });
 
+  socket.on('B2F_switched_valve', function (payload) {
+    state = payload['state'];
+    fillBtn.dataset.status = state;
+    clearClassList(fillBtn);
+
+    if (state == 1) {
+      fillBtn.classList.add('c-fill-btn--active');
+    }
+  });
+
   socket.on('B2F_ultrasonic_data', function (payload) {
     showDistance(payload);
   });
