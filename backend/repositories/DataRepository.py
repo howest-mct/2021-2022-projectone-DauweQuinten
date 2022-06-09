@@ -21,6 +21,17 @@ class DataRepository:
         sql = "SELECT * FROM device"
         return Database.get_rows(sql)
 
+    def read_device_state(deviceid):
+        sql = "SELECT status FROM device WHERE deviceid = %s"
+        params = [deviceid]
+        return Database.get_one_row(sql, params)
+
+    @staticmethod
+    def update_device_state(deviceid, state):
+        sql = "UPDATE device SET status = %s WHERE deviceid = %s"
+        params = [state, deviceid]
+        return Database.execute_sql(sql, params)
+
     @staticmethod
     def read_historiek():
         sql = "SELECT * FROM historiek"

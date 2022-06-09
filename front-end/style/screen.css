@@ -591,13 +591,17 @@ a:focus {
 }
 
 
-
+.c-fill-btn--wait{
+    background-color: #A1E1FF;
+}
 
 .c-fill-btn--active{
     background-color: #007AB3;
     color: white;
     padding: 0px 40px;
 }
+
+
 
 .c-fill-btn--active > .c-fill-btn__svg{
     fill: white;

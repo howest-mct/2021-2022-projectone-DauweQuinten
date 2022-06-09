@@ -28,6 +28,7 @@ emergency_stop = False
 
 # GPIO ventiel
 ventiel = 21
+valve_state = 0
 
 
 # endregion
@@ -86,8 +87,8 @@ def get_historiek():
 
 # endregion
 
-# region sockets
 
+# region sockets
 
 @socketio.on_error()        # Handles the default namespace
 def error_handler(e):
@@ -97,6 +98,24 @@ def error_handler(e):
 @socketio.on('connect')
 def initial_connection():
     print('A new client connect')
+    response = DataRepository.read_device_state(4)
+    print(response)
+    emit('B2F_initial-valve-state', {'state': response['status']})
+
+
+@socketio.on('F2B_switch-valve-state')
+def switch_valve_state(payload):
+    global valve_state
+    print(payload)
+    state = payload['valve_state']
+    DataRepository.insert_historiek(state, 4, 2, "manueel bediend")
+    DataRepository.update_device_state(4, state)
+    valve_state = state
+
+    if state == 0:
+        DataRepository.insert_historiek(
+            water_flow, 3, 1, "Hoeveelheid water bijgevuld")
+
 
 # endregion
 
@@ -144,13 +163,12 @@ def start_main_loop():
     prev_dist = 0
     sensitivity = 10
 
-    valve_state = 0
     prev_valve_state = 0
 
     # region configuratie
 
-    min_level = 1000
-    max_level = 500
+    min_level = 500
+    max_level = 100
 
     # endregion
 
@@ -183,6 +201,7 @@ def start_main_loop():
                 prev_valve_state = valve_state
 
         GPIO.output(ventiel, valve_state)
+        DataRepository.update_device_state(4, valve_state)
 
 
 def start_main_thread():
