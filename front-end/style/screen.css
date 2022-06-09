@@ -33,10 +33,10 @@
 */
 
 html {
-    font-size: 16px;
+    font-size: 20px;
     line-height: 1.5;
     font-family: 'Inter Web', arial, sans-serif;
-    color: #111;
+    color: #15181A;
     box-sizing: border-box;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -161,18 +161,18 @@ hr {
 }
 
 a {
-    color: RoyalBlue;
+    color: #007AB3;
     transition: all .1s ease-in-out;
 }
 
 a:visited,
 a:active {
-    color: BlueViolet;
+    color: #007AB3;
 }
 
 a:hover,
 a:focus {
-    color: Crimson;
+    color: #005780;
 }
 
 /*------------------------------------*\
@@ -532,7 +532,7 @@ a:focus {
 .c-logo{
     color: white;
     font-size: 36px;
-    padding: 0 50px
+    padding: 0 50px;
 }
 
 @media(max-width: 858px){
