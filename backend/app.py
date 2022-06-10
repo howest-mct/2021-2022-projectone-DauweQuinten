@@ -1,7 +1,9 @@
 import time
 import serial
 from RPi import GPIO
+from helpers.i2c_LCD import i2c_LCD
 import threading
+import subprocess
 
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit, send
@@ -15,6 +17,11 @@ from selenium import webdriver
 
 # region global code voor Hardware
 ser = serial.Serial('/dev/ttyS0')
+
+# lcd
+rs_pin = 24
+E_pin = 23
+lcd = i2c_LCD(0x20, rs_pin, E_pin)
 
 # GPIO flowsensor
 flowsens = 20
@@ -178,8 +185,6 @@ def start_main_loop():
 
     # endregion
 
-    setup()
-
     while True:
         data = get_distance_data()
         if(data):
@@ -218,6 +223,28 @@ def start_main_thread():
         target=start_main_loop, args=(), daemon=True)
     sensiThread.start()
 
+
+def start_lcd():
+    lcd_state = 1
+    prev_lcd_state = 0
+
+    while True:
+        # lcd states
+        if lcd_state == 1:
+            if lcd_state != prev_lcd_state:
+                prev_lcd_state = lcd_state
+                schijf_ip_naar_display()
+            else:
+                lcd.shift_canvas_left()
+
+
+def start_lcd_thread():
+    print("**** Starting lcd code ****")
+    lcdThread = threading.Thread(
+        target=start_lcd, args=(), daemon=True)
+    lcdThread.start()
+
+
 # endregion
 
 # region ANDERE FUNCTIES
@@ -236,6 +263,15 @@ def setup():
                           max_level_callback, bouncetime=60)
 
     GPIO.setup(ventiel, GPIO.OUT)
+
+    GPIO.setup(rs_pin, GPIO.OUT)
+    GPIO.setup(E_pin, GPIO.OUT)
+    lcd.init_LCD()
+    lcd.set_cursor(0)
+    lcd.write_message("Hello World!")
+    lcd.enter()
+    lcd.write_message("starting up...")
+    time.sleep(2)
 
 
 def get_distance_data():
@@ -256,6 +292,23 @@ def get_distance_value(data):
     data_h = data[1]
     data_l = data[2]
     return (data_h << 8) | data_l
+
+
+# Get ip-address uit een file en return hem in een string
+def get_ip_string(interface):
+    ip_file = str(subprocess.check_output(['ifconfig', interface]))
+    ip_start_index = ip_file.find("inet ") + 5
+    ip_end_index = ip_file.find(" netmask")
+    ip = ip_file[ip_start_index: ip_end_index]
+    return f"{interface}: {ip}"
+
+
+# display status 1: Schrijf ip-adressen naar de display
+def schijf_ip_naar_display():
+    lcd.clear_display()
+    wlan0 = get_ip_string('wlan0')
+    lcd.write_message(wlan0)
+
 
 # endregion
 
@@ -287,8 +340,10 @@ def max_level_callback(pin):
 # region MAIN
 if __name__ == '__main__':
     try:
-        start_chrome_thread()
+        setup()
+        # start_chrome_thread()
         start_main_thread()
+        start_lcd_thread()
         print("**** Starting APP ****")
         socketio.run(app, debug=False, host='0.0.0.0')
 
@@ -296,6 +351,7 @@ if __name__ == '__main__':
         print('KeyboardInterrupt exception is caught')
     finally:
         GPIO.output(ventiel, 0)
+        lcd.shutdown()
         GPIO.cleanup()
 
 # endregion
