@@ -1,10 +1,12 @@
 import time
 import serial
 from RPi import GPIO
+
 from helpers.i2c_LCD import i2c_LCD
+from helpers.Rotary import Rotary
+
 import threading
 import subprocess
-
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit, send
 from flask import Flask, jsonify, request
@@ -22,6 +24,11 @@ ser = serial.Serial('/dev/ttyS0')
 rs_pin = 24
 E_pin = 23
 lcd = i2c_LCD(0x20, rs_pin, E_pin)
+
+
+# rotary encoder
+rotary = Rotary(6, 22, 27)
+
 
 # GPIO flowsensor
 flowsens = 20
@@ -225,17 +232,38 @@ def start_main_thread():
 
 
 def start_lcd():
-    lcd_state = 1
+
     prev_lcd_state = 0
 
+    rotary.counter = 1
+    prev_counter = 0
+    min_counter = 1
+    max_counter = 2
+
     while True:
+
+        if rotary.counter != prev_counter:
+
+            if rotary.counter > max_counter:
+                rotary.counter = min_counter
+            elif rotary.counter < min_counter:
+                rotary.counter = max_counter
+
+            print(rotary.counter)
+            prev_counter = rotary.counter
+
         # lcd states
-        if lcd_state == 1:
-            if lcd_state != prev_lcd_state:
-                prev_lcd_state = lcd_state
-                schijf_ip_naar_display()
+        if rotary.counter == 1:
+            if rotary.counter != prev_lcd_state:
+                prev_lcd_state = rotary.counter
+                schrijf_ip_naar_display()
             else:
                 lcd.shift_canvas_left()
+
+        elif rotary.counter == 2:
+            if rotary.counter != prev_lcd_state:
+                prev_lcd_state = rotary.counter
+                show_screen_2()
 
 
 def start_lcd_thread():
@@ -266,6 +294,7 @@ def setup():
 
     GPIO.setup(rs_pin, GPIO.OUT)
     GPIO.setup(E_pin, GPIO.OUT)
+
     lcd.init_LCD()
     lcd.set_cursor(0)
     lcd.write_message("Hello World!")
@@ -303,12 +332,17 @@ def get_ip_string(interface):
     return f"{interface}: {ip}"
 
 
-# display status 1: Schrijf ip-adressen naar de display
-def schijf_ip_naar_display():
+# display state 1: Schrijf ip-adressen naar de display
+def schrijf_ip_naar_display():
     lcd.clear_display()
     wlan0 = get_ip_string('wlan0')
     lcd.write_message(wlan0)
 
+
+# display state 2: show current water volume
+def show_screen_2():
+    lcd.clear_display()
+    lcd.write_message("Scherm 2")
 
 # endregion
 
