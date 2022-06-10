@@ -278,6 +278,7 @@ def max_level_callback(pin):
     print("ALERT: Max level detected!")
     emergency_stop = True
     DataRepository.insert_historiek(1, 2, 1, "Max level detected")
+    DataRepository.update_device_state(2, 1)
 
 
 # endregion
