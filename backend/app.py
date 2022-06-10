@@ -105,7 +105,7 @@ def initial_connection():
 
 @socketio.on('F2B_switch_valve')
 def switch_valve(payload):
-    # global valve_state
+    global valve_state
     print(payload)
     state = payload['state']
     DataRepository.insert_historiek(state, 4, 2, "manueel bediend")
@@ -115,7 +115,7 @@ def switch_valve(payload):
     new_state = response['status']
     emit("B2F_switched_valve", {'state': new_state})
 
-    # valve_state = state
+    valve_state = new_state
 
     if state == 0:
         DataRepository.insert_historiek(
@@ -165,6 +165,7 @@ def start_chrome_thread():
 def start_main_loop():
 
     global water_flow
+    global valve_state
     prev_dist = 0
     sensitivity = 10
 
@@ -204,9 +205,11 @@ def start_main_loop():
                     water_flow, 3, 1, "Hoeveelheid water bijgevuld")
                 water_flow = 0
                 prev_valve_state = valve_state
+                DataRepository.update_device_state(4, valve_state)
 
         GPIO.output(ventiel, valve_state)
         DataRepository.update_device_state(4, valve_state)
+        socketio.emit("B2F_changed_by_hardware", {'state': valve_state})
 
 
 def start_main_thread():
@@ -217,7 +220,7 @@ def start_main_thread():
 
 # endregion
 
-# region ANDRE FUNCTIES
+# region ANDERE FUNCTIES
 
 
 def setup():

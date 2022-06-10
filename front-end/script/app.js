@@ -231,6 +231,20 @@ const listenToSocket = function () {
   socket.on('B2F_ultrasonic_data', function (payload) {
     showDistance(payload);
   });
+
+  socket.on('B2F_changed_by_hardware', function (payload) {
+    console.log(payload);
+    const newState = payload['state'];
+    fillBtn.dataset.status = newState;
+    clearClassList(fillBtn);
+
+    if (newState == 1) {
+      fillBtn.classList.add('c-fill-btn--active');
+      setFillBtn(1);
+    } else {
+      setFillBtn(0);
+    }
+  });
 };
 
 const listenToFillBtn = function () {
