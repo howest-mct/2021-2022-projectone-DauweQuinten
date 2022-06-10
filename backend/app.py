@@ -1,8 +1,12 @@
 import time
 import serial
 from RPi import GPIO
-import threading
 
+from helpers.i2c_LCD import i2c_LCD
+from helpers.Rotary import Rotary
+
+import threading
+import subprocess
 from flask_cors import CORS
 from flask_socketio import SocketIO, emit, send
 from flask import Flask, jsonify, request
@@ -15,6 +19,19 @@ from selenium import webdriver
 
 # region global code voor Hardware
 ser = serial.Serial('/dev/ttyS0')
+
+# lcd
+rs_pin = 24
+E_pin = 23
+lcd = i2c_LCD(0x20, rs_pin, E_pin)
+
+
+# rotary encoder
+rotary = Rotary(6, 22, 27)
+
+# volume variabelen
+current_volume = 0
+prev_volume = 0
 
 # GPIO flowsensor
 flowsens = 20
@@ -166,6 +183,7 @@ def start_main_loop():
 
     global water_flow
     global valve_state
+    global current_volume
     prev_dist = 0
     sensitivity = 10
 
@@ -173,31 +191,31 @@ def start_main_loop():
 
     # region configuratie
 
-    min_level = 500
-    max_level = 100
+    min_volume = 1
+    max_volume = 3
 
     # endregion
-
-    setup()
 
     while True:
         data = get_distance_data()
         if(data):
             dist = get_distance_value(data)
-            socketio.emit("B2F_ultrasonic_data", {"value": dist})
+            current_volume = calc_current_volume(dist)
+            # socketio.emit("B2F_ultrasonic_data", {"value": dist})
+            socketio.emit("B2F_current_volume", {"value": current_volume})
 
             if not (prev_dist - sensitivity < dist < prev_dist + sensitivity):
                 DataRepository.insert_historiek(
                     dist, 1, 1, "level measurement")
                 prev_dist = dist
 
-        if dist > min_level and not emergency_stop:
+        if (current_volume < min_volume) and not emergency_stop:
             valve_state = 1
             if valve_state != prev_valve_state:
                 DataRepository.insert_historiek(1, 4, 2, "vullen gestart")
                 prev_valve_state = valve_state
 
-        if (dist < max_level) or emergency_stop:
+        if (current_volume > max_volume) or emergency_stop:
             valve_state = 0
             if valve_state != prev_valve_state:
                 DataRepository.insert_historiek(0, 4, 2, "vullen gestopt")
@@ -218,6 +236,57 @@ def start_main_thread():
         target=start_main_loop, args=(), daemon=True)
     sensiThread.start()
 
+
+def start_lcd():
+
+    global current_volume
+
+    prev_lcd_state = 0
+    rotary.counter = 1
+    prev_counter = 0
+    min_counter = 1
+    max_counter = 2
+
+    while True:
+
+        # hold counter into range
+        if rotary.counter != prev_counter:
+
+            if rotary.counter > max_counter:
+                rotary.counter = min_counter
+            elif rotary.counter < min_counter:
+                rotary.counter = max_counter
+
+            print(rotary.counter)
+            prev_counter = rotary.counter
+
+        # lcd states
+        if rotary.counter == 1:
+            if rotary.counter != prev_lcd_state:
+                prev_lcd_state = rotary.counter
+                schrijf_ip_naar_display()
+            else:
+                lcd.shift_canvas_left()
+
+        elif rotary.counter == 2:
+
+            if rotary.counter != prev_lcd_state:
+                prev_lcd_state = rotary.counter
+                lcd.clear_display()
+                lcd.write_message("Water volume:")
+                lcd.enter()
+                lcd.write_message(f"{str(round(current_volume, 1))} liter")
+            else:
+                show_current_volume()
+
+
+def start_lcd_thread():
+    print("**** Starting lcd code ****")
+    lcdThread = threading.Thread(
+        target=start_lcd, args=(), daemon=True)
+    lcdThread.start()
+
+
 # endregion
 
 # region ANDERE FUNCTIES
@@ -236,6 +305,16 @@ def setup():
                           max_level_callback, bouncetime=60)
 
     GPIO.setup(ventiel, GPIO.OUT)
+
+    GPIO.setup(rs_pin, GPIO.OUT)
+    GPIO.setup(E_pin, GPIO.OUT)
+
+    lcd.init_LCD()
+    lcd.set_cursor(0)
+    lcd.write_message("Hello World!")
+    lcd.enter()
+    lcd.write_message("starting up...")
+    time.sleep(2)
 
 
 def get_distance_data():
@@ -256,6 +335,45 @@ def get_distance_value(data):
     data_h = data[1]
     data_l = data[2]
     return (data_h << 8) | data_l
+
+
+def calc_current_volume(distance):
+    # dimensions in mm
+    area = 32300
+    height = 180
+
+    # calculation
+    water_level = height - distance
+    water_volume = (water_level * area)/1000000
+    return water_volume
+
+
+# Get ip-address uit een file en return hem in een string
+def get_ip_string(interface):
+    ip_file = str(subprocess.check_output(['ifconfig', interface]))
+    ip_start_index = ip_file.find("inet ") + 5
+    ip_end_index = ip_file.find(" netmask")
+    ip = ip_file[ip_start_index: ip_end_index]
+    return f"{interface}: {ip}"
+
+
+# display state 1: Schrijf ip-adressen naar de display
+def schrijf_ip_naar_display():
+    lcd.clear_display()
+    wlan0 = get_ip_string('wlan0')
+    lcd.write_message(wlan0)
+
+
+# display state 2: show current water volume
+def show_current_volume():
+    global current_volume
+    global prev_volume
+
+    if not (prev_volume - 0.2) < current_volume < (prev_volume + 0.2):
+        lcd.enter()
+        lcd.write_message(f"{str(round(current_volume, 1))} liter")
+        prev_volume = current_volume
+
 
 # endregion
 
@@ -287,8 +405,10 @@ def max_level_callback(pin):
 # region MAIN
 if __name__ == '__main__':
     try:
-        start_chrome_thread()
+        setup()
+        # start_chrome_thread()
         start_main_thread()
+        start_lcd_thread()
         print("**** Starting APP ****")
         socketio.run(app, debug=False, host='0.0.0.0')
 
@@ -296,6 +416,7 @@ if __name__ == '__main__':
         print('KeyboardInterrupt exception is caught')
     finally:
         GPIO.output(ventiel, 0)
+        lcd.shutdown()
         GPIO.cleanup()
 
 # endregion
