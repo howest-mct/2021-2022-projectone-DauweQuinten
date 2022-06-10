@@ -54,12 +54,6 @@ const setFillBtn = function (state) {
 
 // #region ***  Callback-Visualisation - show___         ***********
 
-// const showDistance = function (payload) {
-//   const distance = payload.value;
-//   procent = 100 - (100 / 3000) * distance;
-//   chart.updateSeries([procent]);
-// };
-
 const showCurrentVolume = function (payload) {
   const currentVolume = payload.value;
   const maxVolume = 5.8;
