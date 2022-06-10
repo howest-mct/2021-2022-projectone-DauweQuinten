@@ -29,6 +29,9 @@ lcd = i2c_LCD(0x20, rs_pin, E_pin)
 # rotary encoder
 rotary = Rotary(6, 22, 27)
 
+# volume variabelen
+current_volume = 0
+prev_volume = 0
 
 # GPIO flowsensor
 flowsens = 20
@@ -180,6 +183,7 @@ def start_main_loop():
 
     global water_flow
     global valve_state
+    global current_volume
     prev_dist = 0
     sensitivity = 10
 
@@ -187,8 +191,8 @@ def start_main_loop():
 
     # region configuratie
 
-    min_level = 500
-    max_level = 100
+    min_volume = 1
+    max_volume = 3
 
     # endregion
 
@@ -196,22 +200,22 @@ def start_main_loop():
         data = get_distance_data()
         if(data):
             dist = get_distance_value(data)
-            volume = calc_current_volume(dist)
+            current_volume = calc_current_volume(dist)
             # socketio.emit("B2F_ultrasonic_data", {"value": dist})
-            socketio.emit("B2F_current_volume", {"value": volume})
+            socketio.emit("B2F_current_volume", {"value": current_volume})
 
             if not (prev_dist - sensitivity < dist < prev_dist + sensitivity):
                 DataRepository.insert_historiek(
                     dist, 1, 1, "level measurement")
                 prev_dist = dist
 
-        if dist > min_level and not emergency_stop:
+        if (current_volume < min_volume) and not emergency_stop:
             valve_state = 1
             if valve_state != prev_valve_state:
                 DataRepository.insert_historiek(1, 4, 2, "vullen gestart")
                 prev_valve_state = valve_state
 
-        if (dist < max_level) or emergency_stop:
+        if (current_volume > max_volume) or emergency_stop:
             valve_state = 0
             if valve_state != prev_valve_state:
                 DataRepository.insert_historiek(0, 4, 2, "vullen gestopt")
@@ -235,8 +239,9 @@ def start_main_thread():
 
 def start_lcd():
 
-    prev_lcd_state = 0
+    global current_volume
 
+    prev_lcd_state = 0
     rotary.counter = 1
     prev_counter = 0
     min_counter = 1
@@ -244,6 +249,7 @@ def start_lcd():
 
     while True:
 
+        # hold counter into range
         if rotary.counter != prev_counter:
 
             if rotary.counter > max_counter:
@@ -263,9 +269,15 @@ def start_lcd():
                 lcd.shift_canvas_left()
 
         elif rotary.counter == 2:
+
             if rotary.counter != prev_lcd_state:
                 prev_lcd_state = rotary.counter
-                show_screen_2()
+                lcd.clear_display()
+                lcd.write_message("Water volume:")
+                lcd.enter()
+                lcd.write_message(f"{str(round(current_volume, 1))} liter")
+            else:
+                show_current_volume()
 
 
 def start_lcd_thread():
@@ -353,9 +365,14 @@ def schrijf_ip_naar_display():
 
 
 # display state 2: show current water volume
-def show_screen_2():
-    lcd.clear_display()
-    lcd.write_message("Scherm 2")
+def show_current_volume():
+    global current_volume
+    global prev_volume
+
+    if not (prev_volume - 0.2) < current_volume < (prev_volume + 0.2):
+        lcd.enter()
+        lcd.write_message(f"{str(round(current_volume, 1))} liter")
+        prev_volume = current_volume
 
 
 # endregion
