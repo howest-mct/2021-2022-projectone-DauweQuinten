@@ -54,13 +54,22 @@ const setFillBtn = function (state) {
 
 // #region ***  Callback-Visualisation - show___         ***********
 
-const showDistance = function (payload) {
-  const distance = payload.value;
-  procent = 100 - (100 / 3000) * distance;
-  chart.updateSeries([procent]);
+// const showDistance = function (payload) {
+//   const distance = payload.value;
+//   procent = 100 - (100 / 3000) * distance;
+//   chart.updateSeries([procent]);
+// };
+
+const showCurrentVolume = function (payload) {
+  const currentVolume = payload.value;
+  const maxVolume = 5.8;
+  const percentage = (currentVolume / maxVolume) * 100;
+  chart.updateSeries([percentage]);
 };
 
 const drawChart = function () {
+  const maxVolume = 5.8; // hardcoded -> kan eventueel later uit de database gehaald worden.
+
   var options = {
     series: [65],
     chart: {
@@ -113,7 +122,8 @@ const drawChart = function () {
           },
           value: {
             formatter: function (val) {
-              return parseInt(val);
+              // return parseInt(val);
+              return parseInt(val * maxVolume) / 100;
             },
             color: '#111',
             fontSize: '36px',
@@ -138,7 +148,7 @@ const drawChart = function () {
     stroke: {
       lineCap: 'round',
     },
-    labels: ['procent'],
+    labels: ['liter'],
   };
 
   chart = new ApexCharts(document.querySelector('.js-level-chart'), options);
@@ -187,6 +197,10 @@ const listenToSocket = function () {
 
   socket.on('B2F_ultrasonic_data', function (payload) {
     showDistance(payload);
+  });
+
+  socket.on('B2F_current_volume', function (payload) {
+    showCurrentVolume(payload);
   });
 
   socket.on('B2F_changed_by_hardware', function (payload) {

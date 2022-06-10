@@ -196,7 +196,9 @@ def start_main_loop():
         data = get_distance_data()
         if(data):
             dist = get_distance_value(data)
-            socketio.emit("B2F_ultrasonic_data", {"value": dist})
+            volume = calc_current_volume(dist)
+            # socketio.emit("B2F_ultrasonic_data", {"value": dist})
+            socketio.emit("B2F_current_volume", {"value": volume})
 
             if not (prev_dist - sensitivity < dist < prev_dist + sensitivity):
                 DataRepository.insert_historiek(
@@ -323,6 +325,17 @@ def get_distance_value(data):
     return (data_h << 8) | data_l
 
 
+def calc_current_volume(distance):
+    # dimensions in mm
+    area = 32300
+    height = 180
+
+    # calculation
+    water_level = height - distance
+    water_volume = (water_level * area)/1000000
+    return water_volume
+
+
 # Get ip-address uit een file en return hem in een string
 def get_ip_string(interface):
     ip_file = str(subprocess.check_output(['ifconfig', interface]))
@@ -343,6 +356,7 @@ def schrijf_ip_naar_display():
 def show_screen_2():
     lcd.clear_display()
     lcd.write_message("Scherm 2")
+
 
 # endregion
 
