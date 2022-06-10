@@ -70,6 +70,7 @@ const listenToSocket = function () {
       }
     }
   });
+
   socket.on('B2F_verandering_lamp_from_HRDWR', function (jsonObject) {
     console.log(jsonObject);
   });
