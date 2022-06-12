@@ -191,14 +191,13 @@ def start_main_loop():
 
     # region configuratie
 
-    min_volume = 1
+    min_volume = 2
     max_volume = 3
 
     # endregion
 
     while True:
 
-        print(GPIO.input(sw_level_max))
         data = get_distance_data()
         if(data):
             dist = get_distance_value(data)
