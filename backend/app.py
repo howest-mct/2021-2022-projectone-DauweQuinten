@@ -197,6 +197,8 @@ def start_main_loop():
     # endregion
 
     while True:
+
+        print(GPIO.input(sw_level_max))
         data = get_distance_data()
         if(data):
             dist = get_distance_value(data)
