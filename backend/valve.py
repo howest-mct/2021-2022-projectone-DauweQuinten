@@ -12,7 +12,7 @@ try:
         time.sleep(3)
         GPIO.output(21, 0)
         time.sleep(3)
-        
+
 except KeyboardInterrupt:
     print("programma gestopt")
 finally:
