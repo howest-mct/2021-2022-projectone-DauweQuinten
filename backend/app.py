@@ -191,12 +191,13 @@ def start_main_loop():
 
     # region configuratie
 
-    min_volume = 1
+    min_volume = 2
     max_volume = 3
 
     # endregion
 
     while True:
+
         data = get_distance_data()
         if(data):
             dist = get_distance_value(data)
@@ -245,7 +246,7 @@ def start_lcd():
     rotary.counter = 1
     prev_counter = 0
     min_counter = 1
-    max_counter = 2
+    max_counter = 3
 
     while True:
 
@@ -279,6 +280,15 @@ def start_lcd():
             else:
                 show_current_volume()
 
+        elif rotary.counter == 3:
+            if rotary.counter != prev_lcd_state:
+                prev_lcd_state = rotary.counter
+                lcd.clear_display()
+                lcd.write_message("Uitschakelen ?")
+
+            if rotary.switch_is_pressed():
+                shutdown_raspberry_pi()
+
 
 def start_lcd_thread():
     print("**** Starting lcd code ****")
@@ -308,6 +318,8 @@ def setup():
 
     GPIO.setup(rs_pin, GPIO.OUT)
     GPIO.setup(E_pin, GPIO.OUT)
+
+    DataRepository.update_device_state(2, 0)
 
     lcd.init_LCD()
     lcd.set_cursor(0)
@@ -373,6 +385,18 @@ def show_current_volume():
         lcd.enter()
         lcd.write_message(f"{str(round(current_volume, 1))} liter")
         prev_volume = current_volume
+
+
+def shutdown_raspberry_pi():
+    print('uitschakelen...')
+    lcd.clear_display()
+    lcd.write_message('uitschakelen...')
+    lcd.enter()
+    lcd.write_message('Bye!')
+    time.sleep(2)
+    lcd.clear_display()
+    subprocess.Popen(['sudo', 'shutdown', '-h', 'now'])
+    exit(0)
 
 
 # endregion
