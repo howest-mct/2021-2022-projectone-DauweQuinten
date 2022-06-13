@@ -4,6 +4,7 @@ const lanIP = `${window.location.hostname}:5000`;
 const socket = io(`http://${lanIP}`);
 let fillBtn;
 let chart;
+let htmlStats;
 
 // #endregion
 
@@ -248,10 +249,16 @@ const listenToShutdown = function () {
 document.addEventListener('DOMContentLoaded', function () {
   console.info('DOM geladen');
   fillBtn = document.querySelector('.js-btn-fill');
+  htmlStats = document.querySelector('.js-stats');
 
-  drawChart();
-  listenToSocket();
-  listenToFillBtn();
+  if (fillBtn) {
+    console.info('🏠');
+    drawChart();
+    listenToSocket();
+    listenToFillBtn();
+  } else if (htmlStats) {
+    console.info('📊');
+  }
   listenToShutdown();
 });
 
