@@ -233,6 +233,14 @@ const listenToFillBtn = function () {
   });
 };
 
+const listenToShutdown = function () {
+  const shutdownBtn = document.querySelector('.js-shutdown');
+  shutdownBtn.addEventListener('click', function () {
+    console.info('shutdown activated ❌');
+    socket.emit('F2B_shutdown', { state: 'shutdown' });
+  });
+};
+
 // #endregion
 
 // #region ***  Init / DOMContentLoaded                  ***********
@@ -244,6 +252,7 @@ document.addEventListener('DOMContentLoaded', function () {
   drawChart();
   listenToSocket();
   listenToFillBtn();
+  listenToShutdown();
 });
 
 // #endregion

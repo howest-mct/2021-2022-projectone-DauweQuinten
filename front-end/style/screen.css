@@ -514,13 +514,11 @@ a:focus {
     display: inline-block;
     margin: 0 5px;
     line-height: 80px;
-
 }
 
 @media(max-width: 858px){
     .c-nav__item{
         display: block;
-
     }
 }
 
