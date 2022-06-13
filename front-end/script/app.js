@@ -150,6 +150,53 @@ const drawChart = function () {
   chart.render();
 };
 
+const drawStats = function () {
+  var options = {
+    series: [
+      {
+        name: 'Volume',
+        data: [1, 3, 2, 5, 4, 2, 1, 3, 2],
+      },
+    ],
+    chart: {
+      height: 350,
+      type: 'area',
+      zoom: {
+        enabled: false,
+      },
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    stroke: {
+      curve: 'smooth',
+    },
+    title: {
+      text: 'Water volume',
+      align: 'center',
+    },
+    xaxis: {
+      categories: [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+      ],
+    },
+  };
+
+  var chart = new ApexCharts(
+    document.querySelector('.js-stats-chart'),
+    options
+  );
+  chart.render();
+};
+
 // #endregion
 
 // #region ***  Callback-No Visualisation - callback___  ***********
@@ -260,6 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.info('📊');
   }
   listenToShutdown();
+  drawStats();
 });
 
 // #endregion
