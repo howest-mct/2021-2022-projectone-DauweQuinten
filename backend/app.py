@@ -139,6 +139,11 @@ def switch_valve(payload):
             water_flow, 3, 1, "Hoeveelheid water bijgevuld")
 
 
+@socketio.on('F2B_shutdown')
+def shutdown(payload):
+    print(payload)
+    shutdown_raspberry_pi()
+
 # endregion
 
 # region threads
