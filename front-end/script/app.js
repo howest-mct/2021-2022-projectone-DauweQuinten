@@ -4,6 +4,8 @@ const lanIP = `${window.location.hostname}:5000`;
 const socket = io(`http://${lanIP}`);
 let fillBtn;
 let chart;
+let statsChart;
+let htmlStats;
 
 // #endregion
 
@@ -61,11 +63,11 @@ const showCurrentVolume = function (payload) {
   chart.updateSeries([percentage]);
 };
 
-const drawChart = function () {
+const drawCurrentVolumeChart = function () {
   const maxVolume = 5.8; // hardcoded -> kan eventueel later uit de database gehaald worden.
 
   var options = {
-    series: [65],
+    series: [0],
     chart: {
       height: 350,
       type: 'radialBar',
@@ -149,6 +151,54 @@ const drawChart = function () {
   chart.render();
 };
 
+const showStats = function (jsonObject) {
+  console.info(jsonObject);
+  let converted_labels = [];
+  let converted_data = [];
+  for (const record of jsonObject.data) {
+    console.info(record.datum);
+    console.info(record.waarde);
+    converted_labels.push(record.datum);
+    converted_data.push(record.waarde);
+  }
+
+  statsChart.updateOptions({
+    series: [{ data: converted_data }],
+    labels: converted_labels,
+  });
+};
+
+const drawStats = function () {
+  const options = {
+    chart: {
+      id: 'chart',
+      type: 'line',
+    },
+    stroke: {
+      curve: 'smooth',
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    series: [
+      {
+        name: 'Water volume',
+        data: [],
+      },
+    ],
+    labels: [],
+    noData: {
+      text: 'Geen data gevonden tussen de 2 geselecteerde periodes...',
+    },
+  };
+
+  statsChart = new ApexCharts(
+    document.querySelector('.js-stats-chart'),
+    options
+  );
+  statsChart.render();
+};
+
 // #endregion
 
 // #region ***  Callback-No Visualisation - callback___  ***********
@@ -211,6 +261,12 @@ const listenToSocket = function () {
   });
 };
 
+const listenToStatSocket = function () {
+  socket.on('B2F_historiek_data', function (payload) {
+    showStats(payload);
+  });
+};
+
 const listenToFillBtn = function () {
   document.querySelector('.js-btn-fill').addEventListener('click', function () {
     const currentState = this.dataset.status;
@@ -241,6 +297,22 @@ const listenToShutdown = function () {
   });
 };
 
+const listenToSubmit = function () {
+  const htmlSubmitBtn = document.querySelector('.js-submit');
+  htmlSubmitBtn.addEventListener('click', function () {
+    console.info('🖱');
+    let startTime = document.querySelector('.js-start-time').value;
+    let endTime = document.querySelector('.js-end-time').value;
+
+    if (startTime != null && endTime != null) {
+      if (endTime > startTime) {
+        console.log(`data ophalen tussen ${startTime} en ${endTime}`);
+        socket.emit('F2B_submit_times', { start: startTime, end: endTime });
+      }
+    }
+  });
+};
+
 // #endregion
 
 // #region ***  Init / DOMContentLoaded                  ***********
@@ -248,10 +320,19 @@ const listenToShutdown = function () {
 document.addEventListener('DOMContentLoaded', function () {
   console.info('DOM geladen');
   fillBtn = document.querySelector('.js-btn-fill');
+  htmlStats = document.querySelector('.js-stats');
 
-  drawChart();
-  listenToSocket();
-  listenToFillBtn();
+  if (fillBtn) {
+    console.info('🏠');
+    listenToSocket();
+    drawCurrentVolumeChart();
+    listenToFillBtn();
+  } else if (htmlStats) {
+    console.info('📊');
+    listenToSubmit();
+    listenToStatSocket();
+    drawStats();
+  }
   listenToShutdown();
 });
 
