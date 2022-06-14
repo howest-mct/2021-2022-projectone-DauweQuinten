@@ -46,6 +46,6 @@ class DataRepository:
 
     @staticmethod
     def read_historiek_between(deviceid, date1, date2):
-        sql = 'SELECT datum, waarde FROM historiek WHERE deviceid = %s AND datum BETWEEN %s AND %s'
+        sql = 'SELECT cast(datum AS CHAR) datum, waarde FROM historiek WHERE deviceid = %s AND datum BETWEEN %s AND %s'
         params = [deviceid, date1, date2]
         return Database.get_rows(sql, params)

@@ -12,6 +12,7 @@ from flask_socketio import SocketIO, emit, send
 from flask import Flask, jsonify, request
 from repositories.DataRepository import DataRepository
 
+
 from selenium import webdriver
 # from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
@@ -144,6 +145,16 @@ def switch_valve(payload):
 def shutdown(payload):
     print(payload)
     shutdown_raspberry_pi()
+
+
+@socketio.on('F2B_submit_times')
+def get_historiek_between(payload):
+    print(payload)
+    start = payload['start']
+    end = payload['end']
+    response = DataRepository.read_historiek_between(1, start, end)
+    emit("B2F_historiek_data", {"data": response})
+
 
 # endregion
 

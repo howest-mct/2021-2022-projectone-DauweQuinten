@@ -4,6 +4,7 @@ const lanIP = `${window.location.hostname}:5000`;
 const socket = io(`http://${lanIP}`);
 let fillBtn;
 let chart;
+let statsChart;
 let htmlStats;
 
 // #endregion
@@ -62,7 +63,7 @@ const showCurrentVolume = function (payload) {
   chart.updateSeries([percentage]);
 };
 
-const drawChart = function () {
+const drawCurrentVolumeChart = function () {
   const maxVolume = 5.8; // hardcoded -> kan eventueel later uit de database gehaald worden.
 
   var options = {
@@ -150,51 +151,52 @@ const drawChart = function () {
   chart.render();
 };
 
+const showStats = function (jsonObject) {
+  console.info(jsonObject);
+  let converted_labels = [];
+  let converted_data = [];
+  for (const record of jsonObject.data) {
+    console.info(record.datum);
+    console.info(record.waarde);
+    converted_labels.push(record.datum);
+    converted_data.push(record.waarde);
+  }
+
+  statsChart.updateOptions({
+    series: [{ data: converted_data }],
+    labels: converted_labels,
+  });
+};
+
 const drawStats = function () {
-  var options = {
-    series: [
-      {
-        name: 'Volume',
-        data: [1, 3, 2, 5, 4, 2, 1, 3, 2],
-      },
-    ],
+  const options = {
     chart: {
-      height: 350,
-      type: 'area',
-      zoom: {
-        enabled: false,
-      },
-    },
-    dataLabels: {
-      enabled: false,
+      id: 'chart',
+      type: 'line',
     },
     stroke: {
       curve: 'smooth',
     },
-    title: {
-      text: 'Water volume',
-      align: 'center',
+    dataLabels: {
+      enabled: false,
     },
-    xaxis: {
-      categories: [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-      ],
+    series: [
+      {
+        name: 'Water volume',
+        data: [],
+      },
+    ],
+    labels: [],
+    noData: {
+      text: 'Geen data gevonden tussen de 2 geselecteerde periodes...',
     },
   };
 
-  var chart = new ApexCharts(
+  statsChart = new ApexCharts(
     document.querySelector('.js-stats-chart'),
     options
   );
-  chart.render();
+  statsChart.render();
 };
 
 // #endregion
@@ -259,6 +261,12 @@ const listenToSocket = function () {
   });
 };
 
+const listenToStatSocket = function () {
+  socket.on('B2F_historiek_data', function (payload) {
+    showStats(payload);
+  });
+};
+
 const listenToFillBtn = function () {
   document.querySelector('.js-btn-fill').addEventListener('click', function () {
     const currentState = this.dataset.status;
@@ -289,6 +297,22 @@ const listenToShutdown = function () {
   });
 };
 
+const listenToSubmit = function () {
+  const htmlSubmitBtn = document.querySelector('.js-submit');
+  htmlSubmitBtn.addEventListener('click', function () {
+    console.info('🖱');
+    let startTime = document.querySelector('.js-start-time').value;
+    let endTime = document.querySelector('.js-end-time').value;
+
+    if (startTime != null && endTime != null) {
+      if (endTime > startTime) {
+        console.log(`data ophalen tussen ${startTime} en ${endTime}`);
+        socket.emit('F2B_submit_times', { start: startTime, end: endTime });
+      }
+    }
+  });
+};
+
 // #endregion
 
 // #region ***  Init / DOMContentLoaded                  ***********
@@ -300,14 +324,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (fillBtn) {
     console.info('🏠');
-    drawChart();
     listenToSocket();
+    drawCurrentVolumeChart();
     listenToFillBtn();
   } else if (htmlStats) {
     console.info('📊');
+    listenToSubmit();
+    listenToStatSocket();
+    drawStats();
   }
   listenToShutdown();
-  drawStats();
 });
 
 // #endregion

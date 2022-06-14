@@ -40,7 +40,7 @@
       <label class="c-logo">slimme waterput</label>
       <ul class="c-nav">
         <li class="c-nav__item">
-          <a href="./home.html" class="c-nav__link">startpagina</a>
+          <a href="./index.html" class="c-nav__link">startpagina</a>
         </li>
         <li class="c-nav__item">
           <a href="./statistics.html" class="c-nav__link">statistieken</a>
@@ -52,11 +52,21 @@
     </header>
     <div class="o-container">
       <div class="o-row">
-        <p>Dit is de statistiekpagina</p>
-        <input type="datetime-local" name="" id="" />
-        <input type="datetime-local" name="" id="" />
+        <input
+          type="datetime-local"
+          name="start-time"
+          id=""
+          class="js-start-time"
+        />
+        <input
+          type="datetime-local"
+          name="end-time"
+          id=""
+          class="js-end-time"
+        />
+        <button class="js-submit">submit</button>
       </div>
-      <div class="js-stats-chart"></div>
+      <div class="js-stats-chart c-chart"></div>
     </div>
   </body>
 </html>
