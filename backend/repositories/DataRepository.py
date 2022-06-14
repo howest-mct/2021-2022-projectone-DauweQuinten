@@ -21,6 +21,7 @@ class DataRepository:
         sql = "SELECT * FROM device"
         return Database.get_rows(sql)
 
+    @staticmethod
     def read_device_state(deviceid):
         sql = "SELECT status FROM device WHERE deviceid = %s"
         params = [deviceid]
@@ -42,3 +43,9 @@ class DataRepository:
         sql = "INSERT INTO historiek (waarde, commentaar, deviceid, actieid) VALUES (%s, %s, %s, %s)"
         params = [value, commentaar, deviceid, actieid]
         return Database.execute_sql(sql, params)
+
+    @staticmethod
+    def read_historiek_between(deviceid, date1, date2):
+        sql = 'SELECT datum, waarde FROM historiek WHERE deviceid = %s AND datum BETWEEN %s AND %s'
+        params = [deviceid, date1, date2]
+        return Database.get_rows(sql, params)

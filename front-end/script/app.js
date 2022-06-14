@@ -66,7 +66,7 @@ const drawChart = function () {
   const maxVolume = 5.8; // hardcoded -> kan eventueel later uit de database gehaald worden.
 
   var options = {
-    series: [65],
+    series: [0],
     chart: {
       height: 350,
       type: 'radialBar',

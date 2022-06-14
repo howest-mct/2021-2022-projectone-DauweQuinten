@@ -102,6 +102,7 @@ def get_historiek():
         except Exception:
             return jsonify(status='error'), 400
 
+
 # endregion
 
 
