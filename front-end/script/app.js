@@ -6,6 +6,7 @@ let fillBtn;
 let chart;
 let statsChart;
 let htmlStats;
+let htmlSettings;
 
 // #endregion
 
@@ -313,6 +314,13 @@ const listenToSubmit = function () {
   });
 };
 
+const listenToChangeSettings = function () {
+  htmlSettingsBtn = document.querySelector('.js-settings-btn');
+  htmlSettingsBtn.addEventListener('click', function () {
+    console.info('🖱');
+  });
+};
+
 // #endregion
 
 // #region ***  Init / DOMContentLoaded                  ***********
@@ -321,6 +329,7 @@ document.addEventListener('DOMContentLoaded', function () {
   console.info('DOM geladen');
   fillBtn = document.querySelector('.js-btn-fill');
   htmlStats = document.querySelector('.js-stats');
+  htmlSettings = document.querySelector('.js-settings');
 
   if (fillBtn) {
     console.info('🏠');
@@ -332,6 +341,9 @@ document.addEventListener('DOMContentLoaded', function () {
     listenToSubmit();
     listenToStatSocket();
     drawStats();
+  } else if (htmlSettings) {
+    console.log('⚙');
+    listenToChangeSettings();
   }
   listenToShutdown();
 });
