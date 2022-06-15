@@ -33,6 +33,8 @@ rotary = Rotary(6, 22, 27)
 # volume variabelen
 current_volume = 0
 prev_volume = 0
+min_volume = 0
+max_volume = 0
 
 # GPIO flowsensor
 flowsens = 20
@@ -104,10 +106,30 @@ def get_historiek():
             return jsonify(status='error'), 400
 
 
+@app.route(endpoint + '/configuration/', methods=['GET', 'PUT'])
+def get_configuration():
+    if request.method == 'GET':
+        data = DataRepository.read_configuration()
+        return jsonify(data), 200
+    elif request.method == 'PUT':
+        gegevens = DataRepository.json_or_formdata(request)
+        print(gegevens)
+        for setting in gegevens.items():
+            setting_data = setting[1][0]
+            config_id = setting_data['id']
+            new_value = setting_data['value']
+            result = DataRepository.update_configuration(config_id, new_value)
+            if result < 0:
+                return jsonify(state='error'), 400
+            print(setting)
+
+        return jsonify(state='OK'), 200
+
+
 # endregion
 
-
 # region sockets
+
 
 @socketio.on_error()        # Handles the default namespace
 def error_handler(e):
@@ -148,13 +170,24 @@ def shutdown(payload):
 
 
 @socketio.on('F2B_submit_times')
-def get_historiek_between(payload):
+def get_volume_between(payload):
     print(payload)
     start = payload['start']
     end = payload['end']
     response = DataRepository.read_historiek_between(1, start, end)
+    for record in response:
+        record['waarde'] = round(calc_current_volume(record['waarde']), 2)
+        print(record)
     emit("B2F_historiek_data", {"data": response})
 
+
+@socketio.on('F2B_update_config')
+def set_new_config(payload):
+    global min_volume
+    global max_volume
+    config = get_current_config()
+    min_volume = config['min']
+    max_volume = config['max']
 
 # endregion
 
@@ -201,25 +234,25 @@ def start_main_loop():
     global water_flow
     global valve_state
     global current_volume
+    global min_volume
+    global max_volume
     prev_dist = 0
     sensitivity = 10
-
     prev_valve_state = 0
 
     # region configuratie
 
-    min_volume = 2
-    max_volume = 3
+    config = get_current_config()
+    min_volume = config['min']
+    max_volume = config['max']
 
     # endregion
 
     while True:
-
         data = get_distance_data()
         if(data):
             dist = get_distance_value(data)
             current_volume = calc_current_volume(dist)
-            # socketio.emit("B2F_ultrasonic_data", {"value": dist})
             socketio.emit("B2F_current_volume", {"value": current_volume})
 
             if not (prev_dist - sensitivity < dist < prev_dist + sensitivity):
@@ -415,6 +448,15 @@ def shutdown_raspberry_pi():
     subprocess.Popen(['sudo', 'shutdown', '-h', 'now'])
     exit(0)
 
+
+def get_current_config():
+
+    config_data = DataRepository.read_configuration()
+    min_volume = float(config_data[0]['value'])
+    fill_amount = float(config_data[1]['value'])
+    max_volume = min_volume + fill_amount
+
+    return {'min': min_volume, 'max': max_volume}
 
 # endregion
 
