@@ -452,6 +452,74 @@ a:focus {
 }
 
 
+/*
+    Component: form
+    ---
+    forms
+*/
+
+
+.c-form{
+    max-width: 500px;
+    margin: 48px auto;
+    padding: 32px;
+}
+
+.c-form__item{
+    display: block;
+    width: 100%;
+    padding: 4px;
+}
+
+.c-form__btn{
+    margin-top: 32px;
+    padding: 0 24px;
+    background-color: #D4F1FF;
+    color: #005780;
+    border-style: none;
+    box-shadow: 2px 8px 5px rgba(0, 0, 0, 0.1);
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 48px;
+    text-transform: uppercase;
+    box-sizing: border-box;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 8px;
+    cursor:pointer;  
+}
+
+.c-form__btn:active, .c-form__btn:hover{
+    background-color: #A1E1FF;
+    transition: background-color 0.3s ease;
+}
+
+
+/*
+    Component: .c-btn-shutdown
+    ---
+    button om te rasperry pi uit te schakelen
+*/
+
+.c-btn-shutdown{
+    color: #005780;
+    font-weight: 600;
+    background-color: #D4F1FF;
+    border: none;
+    border-radius: 24px;
+    padding: 8px 16px;
+    box-shadow: 2px 8px 5px rgba(0, 0, 0, 0.1);
+    cursor:pointer;  
+}
+
+
+.c-btn-shutdown:active, .c-btn-shutdown:hover{
+    background-color: #A1E1FF;
+    transition: background-color 0.3s ease;
+}
+
+
+
 
 /*
     Component: header
@@ -537,9 +605,9 @@ a:focus {
 @media(max-width: 858px){
     .c-logo{
         padding: 25px;
+        font-size: 32px;
     }
 }
-
 
 
 /*
@@ -573,6 +641,13 @@ a:focus {
 }
 
 
+/*
+    Component: c-fill-btn
+    ---
+    vulknop
+*/
+
+
 .c-fill-btn{
     padding: 0 95px;
     background-color: #D4F1FF;
@@ -587,8 +662,13 @@ a:focus {
     box-sizing: border-box;
     text-align: center;
     vertical-align: middle;
+    cursor:pointer;  
 }
 
+.c-fill-btn:hover{
+    background-color: #A1E1FF;
+    transition: background-color 0.3s ease;
+}
 
 .c-fill-btn--wait{
     background-color: #A1E1FF;
@@ -607,8 +687,28 @@ a:focus {
 }
 
 
+/*
+    Component: c-chart
+    ---
+    grafieken
+*/
+
+
 .c-chart{
     max-width: 1080px;
+}
+
+
+
+/*
+    Component: c-melding
+    ---
+    meldingen
+*/
+
+
+.c-melding{
+    text-align: center;
 }
 
 
