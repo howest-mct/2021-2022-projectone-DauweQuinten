@@ -223,6 +223,7 @@ const showConfiguration = function (jsonObject) {
 
 const callbackUpdateConfig = function (jsonObject) {
   console.info(jsonObject);
+  socket.emit('F2B_update_config', { state: 'update' });
 };
 
 // #endregion
