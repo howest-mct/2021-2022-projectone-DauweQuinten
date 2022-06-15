@@ -2,9 +2,15 @@
 
 const lanIP = `${window.location.hostname}:5000`;
 const socket = io(`http://${lanIP}`);
+
 let fillBtn;
+
+let htmlConfigMinLevel;
+let htmlConfigAmount;
+
 let chart;
 let statsChart;
+
 let htmlStats;
 let htmlSettings;
 
@@ -200,6 +206,17 @@ const drawStats = function () {
   statsChart.render();
 };
 
+const showConfiguration = function (jsonObject) {
+  for (const config of jsonObject) {
+    console.info(config);
+    if (config.configid == 1) {
+      htmlConfigMinLevel.value = config.value;
+    } else if (config.configid == 2) {
+      htmlConfigAmount.value = config.value;
+    }
+  }
+};
+
 // #endregion
 
 // #region ***  Callback-No Visualisation - callback___  ***********
@@ -207,6 +224,12 @@ const drawStats = function () {
 // #endregion
 
 // #region ***  Data Access - get___                     ***********
+
+const getConfiguration = function () {
+  const url = `http://${lanIP}/api/v1/configuration/`;
+  handleData(url, showConfiguration);
+};
+
 // #endregion
 
 // #region ***  Event Listeners - listenTo___            ***********
@@ -330,6 +353,8 @@ document.addEventListener('DOMContentLoaded', function () {
   fillBtn = document.querySelector('.js-btn-fill');
   htmlStats = document.querySelector('.js-stats');
   htmlSettings = document.querySelector('.js-settings');
+  htmlConfigMinLevel = document.querySelector('.js-min-config');
+  htmlConfigAmount = document.querySelector('.js-amount-config');
 
   if (fillBtn) {
     console.info('🏠');
@@ -343,6 +368,7 @@ document.addEventListener('DOMContentLoaded', function () {
     drawStats();
   } else if (htmlSettings) {
     console.log('⚙');
+    getConfiguration();
     listenToChangeSettings();
   }
   listenToShutdown();
