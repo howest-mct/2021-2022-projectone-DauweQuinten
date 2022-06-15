@@ -104,10 +104,14 @@ def get_historiek():
             return jsonify(status='error'), 400
 
 
+@app.route(endpoint + '/configuration/', methods=['GET', 'PUT'])
+def get_configuration():
+    data = DataRepository.read_configuration()
+    return jsonify(data), 200
+
 # endregion
-
-
 # region sockets
+
 
 @socketio.on_error()        # Handles the default namespace
 def error_handler(e):
@@ -209,7 +213,7 @@ def start_main_loop():
     # region configuratie
 
     min_volume = 2
-    max_volume = 3
+    max_volume = 4
 
     # endregion
 

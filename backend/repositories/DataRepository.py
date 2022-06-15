@@ -49,3 +49,8 @@ class DataRepository:
         sql = 'SELECT cast(datum AS CHAR) datum, waarde FROM historiek WHERE deviceid = %s AND datum BETWEEN %s AND %s'
         params = [deviceid, date1, date2]
         return Database.get_rows(sql, params)
+
+    @staticmethod
+    def read_configuration():
+        sql = 'SELECT * FROM configuratie'
+        return Database.get_rows(sql)
