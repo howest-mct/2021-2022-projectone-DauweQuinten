@@ -54,3 +54,9 @@ class DataRepository:
     def read_configuration():
         sql = 'SELECT * FROM configuratie'
         return Database.get_rows(sql)
+
+    @staticmethod
+    def update_configuration(config_id, value):
+        sql = 'UPDATE configuratie SET value = %s WHERE configid = %s'
+        params = [value, config_id]
+        return Database.execute_sql(sql, params)

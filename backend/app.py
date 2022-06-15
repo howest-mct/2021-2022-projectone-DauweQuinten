@@ -106,8 +106,23 @@ def get_historiek():
 
 @app.route(endpoint + '/configuration/', methods=['GET', 'PUT'])
 def get_configuration():
-    data = DataRepository.read_configuration()
-    return jsonify(data), 200
+    if request.method == 'GET':
+        data = DataRepository.read_configuration()
+        return jsonify(data), 200
+    elif request.method == 'PUT':
+        gegevens = DataRepository.json_or_formdata(request)
+        print(gegevens)
+        for setting in gegevens.items():
+            setting_data = setting[1][0]
+            config_id = setting_data['id']
+            new_value = setting_data['value']
+            result = DataRepository.update_configuration(config_id, new_value)
+            if result < 0:
+                return jsonify(state='error'), 400
+            print(setting)
+
+        return jsonify(state='OK'), 200
+
 
 # endregion
 # region sockets

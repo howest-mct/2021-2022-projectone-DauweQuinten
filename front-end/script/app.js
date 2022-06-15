@@ -221,6 +221,10 @@ const showConfiguration = function (jsonObject) {
 
 // #region ***  Callback-No Visualisation - callback___  ***********
 
+const callbackUpdateConfig = function (jsonObject) {
+  console.info(jsonObject);
+};
+
 // #endregion
 
 // #region ***  Data Access - get___                     ***********
@@ -340,7 +344,17 @@ const listenToSubmit = function () {
 const listenToChangeSettings = function () {
   htmlSettingsBtn = document.querySelector('.js-settings-btn');
   htmlSettingsBtn.addEventListener('click', function () {
-    console.info('🖱');
+    // console.info('🖱');
+    const url = `http://${lanIP}/api/v1/configuration/`;
+    const newMinLevel = htmlConfigMinLevel.value;
+    const newFillAmount = htmlConfigAmount.value;
+    if (newMinLevel != '' && newFillAmount != '') {
+      const payload = JSON.stringify({
+        minimum: [{ id: 1, value: newMinLevel }],
+        fillAmount: [{ id: 2, value: newFillAmount }],
+      });
+      handleData(url, callbackUpdateConfig, null, 'PUT', payload);
+    }
   });
 };
 
