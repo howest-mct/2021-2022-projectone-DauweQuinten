@@ -170,7 +170,7 @@ def shutdown(payload):
 
 
 @socketio.on('F2B_submit_times')
-def get_historiek_between(payload):
+def get_volume_between(payload):
     print(payload)
     start = payload['start']
     end = payload['end']
