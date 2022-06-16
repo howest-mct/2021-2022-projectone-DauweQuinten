@@ -181,6 +181,11 @@ const drawStats = function () {
       id: 'chart',
       type: 'line',
     },
+    yaxis: {
+      title: {
+        text: 'volume (liter)',
+      },
+    },
     stroke: {
       curve: 'smooth',
     },
@@ -189,13 +194,27 @@ const drawStats = function () {
     },
     series: [
       {
-        name: 'Water volume',
+        name: 'water volume',
         data: [],
       },
     ],
     labels: [],
     noData: {
-      text: 'Geen data gevonden tussen de 2 geselecteerde periodes...',
+      text: 'Geen data gevonden...',
+    },
+    title: {
+      text: 'water volume (liter)',
+      align: 'center',
+      margin: 10,
+      offsetX: 0,
+      offsetY: 0,
+      floating: false,
+      style: {
+        fontSize: '32px',
+        fontWeight: 'bold',
+        fontFamily: undefined,
+        color: '#263238',
+      },
     },
   };
 
@@ -207,6 +226,7 @@ const drawStats = function () {
 };
 
 const showConfiguration = function (jsonObject) {
+  console.info(jsonObject);
   for (const config of jsonObject) {
     console.info(config);
     if (config.configid == 1) {
@@ -217,14 +237,22 @@ const showConfiguration = function (jsonObject) {
   }
 };
 
+const showUpdateConfig = function (jsonObject) {
+  console.info(jsonObject);
+  document.querySelector('.js-update-status').innerHTML =
+    'De configuratie werd succesvol geüpdatet ✅';
+  socket.emit('F2B_update_config', { state: 'update' });
+};
+
+const showUpdateError = function (jsonObject) {
+  console.info(jsonObject);
+  document.querySelector('.js-update-status').innerHTML =
+    'Sorry, er liep iets mis ❌';
+};
+
 // #endregion
 
 // #region ***  Callback-No Visualisation - callback___  ***********
-
-const callbackUpdateConfig = function (jsonObject) {
-  console.info(jsonObject);
-  socket.emit('F2B_update_config', { state: 'update' });
-};
 
 // #endregion
 
@@ -345,7 +373,6 @@ const listenToSubmit = function () {
 const listenToChangeSettings = function () {
   htmlSettingsBtn = document.querySelector('.js-settings-btn');
   htmlSettingsBtn.addEventListener('click', function () {
-    // console.info('🖱');
     const url = `http://${lanIP}/api/v1/configuration/`;
     const newMinLevel = htmlConfigMinLevel.value;
     const newFillAmount = htmlConfigAmount.value;
@@ -354,7 +381,7 @@ const listenToChangeSettings = function () {
         minimum: [{ id: 1, value: newMinLevel }],
         fillAmount: [{ id: 2, value: newFillAmount }],
       });
-      handleData(url, callbackUpdateConfig, null, 'PUT', payload);
+      handleData(url, showUpdateConfig, showUpdateError, 'PUT', payload);
     }
   });
 };
@@ -370,23 +397,20 @@ document.addEventListener('DOMContentLoaded', function () {
   htmlSettings = document.querySelector('.js-settings');
   htmlConfigMinLevel = document.querySelector('.js-min-config');
   htmlConfigAmount = document.querySelector('.js-amount-config');
+  listenToShutdown();
 
   if (fillBtn) {
-    console.info('🏠');
     listenToSocket();
     drawCurrentVolumeChart();
     listenToFillBtn();
   } else if (htmlStats) {
-    console.info('📊');
     listenToSubmit();
     listenToStatSocket();
     drawStats();
   } else if (htmlSettings) {
-    console.log('⚙');
     getConfiguration();
     listenToChangeSettings();
   }
-  listenToShutdown();
 });
 
 // #endregion

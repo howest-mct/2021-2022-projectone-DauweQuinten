@@ -237,7 +237,7 @@ a:focus {
     margin-left: auto;
     margin-right: auto;
     width: 100%;
-    max-width: 90em; /* 90 * 16px = 1440px */
+    max-width: 50em; /* 90 * 16px = 1440px */
 }
 
 /*
@@ -452,6 +452,93 @@ a:focus {
 }
 
 
+/*
+    Component: form
+    ---
+    forms
+*/
+
+
+.c-form{
+    max-width: 500px;
+    margin: 48px auto;
+    padding: 32px;
+}
+
+.c-form--date{
+    margin: 16px auto;
+}
+
+@media(max-width: 1014px){
+
+    .c-form--date{
+        margin: 16px auto;
+    }
+    .c-form--date .c-form__item{
+        align-self: center;
+    }
+}
+
+.c-form__item{
+    display: block;
+    width: 100%;
+    padding: 4px;   
+}
+
+.c-form__object + .c-form__object{
+    padding-top: 16px;
+}
+
+
+.c-form__btn{
+    margin-top: 32px;
+    padding: 0 24px;
+    background-color: #D4F1FF;
+    color: #005780;
+    border-style: none;
+    box-shadow: 2px 8px 5px rgba(0, 0, 0, 0.1);
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 48px;
+    text-transform: uppercase;
+    box-sizing: border-box;
+    text-align: center;
+    vertical-align: middle;
+    border-radius: 8px;
+    cursor:pointer;  
+}
+
+.c-form__btn:active, .c-form__btn:hover{
+    background-color: #A1E1FF;
+    transition: background-color 0.3s ease;
+}
+
+
+/*
+    Component: .c-btn-shutdown
+    ---
+    button om te rasperry pi uit te schakelen
+*/
+
+.c-btn-shutdown{
+    color: #005780;
+    font-weight: 600;
+    background-color: #D4F1FF;
+    border: none;
+    border-radius: 24px;
+    padding: 8px 16px;
+    box-shadow: 2px 8px 5px rgba(0, 0, 0, 0.1);
+    cursor:pointer;  
+}
+
+
+.c-btn-shutdown:active, .c-btn-shutdown:hover{
+    background-color: #A1E1FF;
+    transition: background-color 0.3s ease;
+}
+
+
+
 
 /*
     Component: header
@@ -470,7 +557,7 @@ a:focus {
     margin-right: 20px;
 }
 
-@media(max-width: 858px){
+@media(max-width: 1014px){
     .c-nav{
         position: fixed;
         z-index: 1;
@@ -503,7 +590,7 @@ a:focus {
     transition: 0.5s;
 }
 
-@media(max-width: 858px){
+@media(max-width: 1014px){
     .c-nav__link.active, .c-nav__link:hover{
         background: none;
         color: #20B9FF
@@ -516,7 +603,7 @@ a:focus {
     line-height: 80px;
 }
 
-@media(max-width: 858px){
+@media(max-width: 1014px){
     .c-nav__item{
         display: block;
     }
@@ -534,12 +621,20 @@ a:focus {
     padding: 0 50px;
 }
 
-@media(max-width: 858px){
+
+@media(max-width: 448px){
     .c-logo{
         padding: 25px;
+        font-size: 32px;
     }
 }
 
+@media(max-width: 366px){
+    .c-logo{
+        padding: 25px;
+        font-size: 18px;
+    }
+}
 
 
 /*
@@ -558,7 +653,7 @@ a:focus {
     display: None;
 }
 
-@media(max-width: 858px){
+@media(max-width: 1014px){
     .c-hamburger{
         display: block
     }
@@ -571,6 +666,13 @@ a:focus {
 .c-hamburger__check:checked ~ .c-nav{
     left: 0;
 }
+
+
+/*
+    Component: c-fill-btn
+    ---
+    vulknop
+*/
 
 
 .c-fill-btn{
@@ -587,8 +689,13 @@ a:focus {
     box-sizing: border-box;
     text-align: center;
     vertical-align: middle;
+    cursor:pointer;  
 }
 
+.c-fill-btn:hover{
+    background-color: #A1E1FF;
+    transition: background-color 0.3s ease;
+}
 
 .c-fill-btn--wait{
     background-color: #A1E1FF;
@@ -607,8 +714,28 @@ a:focus {
 }
 
 
+/*
+    Component: c-chart
+    ---
+    grafieken
+*/
+
+
 .c-chart{
-    max-width: 1080px;
+    margin-bottom: 32px;
+}
+
+
+
+/*
+    Component: c-melding
+    ---
+    meldingen
+*/
+
+
+.c-melding{
+    text-align: center;
 }
 
 
