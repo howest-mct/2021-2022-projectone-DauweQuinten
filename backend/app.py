@@ -154,8 +154,7 @@ def switch_valve(payload):
 
     response = DataRepository.read_device_state(4)
     new_state = response['status']
-    emit("B2F_switched_valve", {'state': new_state})
-
+    socketio.emit("B2F_switched_valve", {'state': new_state})
     valve_state = new_state
 
     if state == 0:
@@ -470,7 +469,7 @@ def flow_puls_callback(pin):
 
     water_flow = pulsen * 2.25
 
-    print(f"FLOW : {water_flow} ml")
+    # print(f"FLOW : {water_flow} ml")
 
 
 def max_level_callback(pin):
