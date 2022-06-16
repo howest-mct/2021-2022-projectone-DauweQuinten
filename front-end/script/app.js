@@ -8,6 +8,8 @@ let fillBtn;
 let htmlConfigMinLevel;
 let htmlConfigAmount;
 
+let htmlEmergencyMessage;
+
 let chart;
 let statsChart;
 
@@ -273,7 +275,7 @@ const listenToSocket = function () {
   });
 
   socket.on('B2F_initial-valve-state', function (payload) {
-    console.log('dit is de status van het ventiel:');
+    console.log('Dit is de status van het ventiel:');
     console.log(payload);
     fillBtn.dataset.status = payload.state;
     clearClassList(fillBtn);
@@ -282,6 +284,15 @@ const listenToSocket = function () {
       fillBtn.classList.add('c-fill-btn--active');
 
       setFillBtn(1);
+    }
+  });
+
+  socket.on('B2F_initial-switch-state', function (payload) {
+    console.log('Dit is de status van de max niveau begrenzing:');
+    console.log(payload);
+    state = payload.state;
+    if (state == 1) {
+      htmlEmergencyMessage.classList.remove('u-hide');
     }
   });
 
@@ -315,6 +326,16 @@ const listenToSocket = function () {
     } else {
       setFillBtn(0);
     }
+  });
+
+  socket.on('B2F_max_level_detected', function (jsonObject) {
+    console.info(jsonObject);
+    htmlEmergencyMessage.classList.remove('u-hide');
+  });
+
+  socket.on('B2F_unlock_emergency_stop', function (jsonObject) {
+    console.info(jsonObject);
+    htmlEmergencyMessage.classList.add('u-hide');
   });
 };
 
@@ -376,12 +397,21 @@ const listenToChangeSettings = function () {
     const url = `http://${lanIP}/api/v1/configuration/`;
     const newMinLevel = htmlConfigMinLevel.value;
     const newFillAmount = htmlConfigAmount.value;
+    const maxVolume = 5;
     if (newMinLevel != '' && newFillAmount != '') {
-      const payload = JSON.stringify({
-        minimum: [{ id: 1, value: newMinLevel }],
-        fillAmount: [{ id: 2, value: newFillAmount }],
-      });
-      handleData(url, showUpdateConfig, showUpdateError, 'PUT', payload);
+      if (parseFloat(newMinLevel) + parseFloat(newFillAmount) <= maxVolume) {
+        const payload = JSON.stringify({
+          minimum: [{ id: 1, value: newMinLevel }],
+          fillAmount: [{ id: 2, value: newFillAmount }],
+        });
+        handleData(url, showUpdateConfig, showUpdateError, 'PUT', payload);
+      } else {
+        document.querySelector('.js-update-status').innerHTML =
+          'Oeps, deze waarden zijn te hoog... De waterput mag slechts 5 liter bevatten ❗';
+      }
+    } else {
+      document.querySelector('.js-update-status').innerHTML =
+        'Gelieve eerst de bovenstaande velden in te vullen 😊';
     }
   });
 };
@@ -397,6 +427,8 @@ document.addEventListener('DOMContentLoaded', function () {
   htmlSettings = document.querySelector('.js-settings');
   htmlConfigMinLevel = document.querySelector('.js-min-config');
   htmlConfigAmount = document.querySelector('.js-amount-config');
+  htmlEmergencyMessage = document.querySelector('.js-vergrendeling-state');
+
   listenToShutdown();
 
   if (fillBtn) {

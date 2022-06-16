@@ -20,10 +20,12 @@ from selenium import webdriver
 
 # region global code voor Hardware
 ser = serial.Serial('/dev/ttyS0')
+is_shutdowned = False
 
 # lcd
 rs_pin = 24
 E_pin = 23
+lcd_state = 1
 lcd = i2c_LCD(0x20, rs_pin, E_pin)
 
 
@@ -130,7 +132,6 @@ def get_configuration():
 
 # region sockets
 
-
 @socketio.on_error()        # Handles the default namespace
 def error_handler(e):
     print(e)
@@ -138,10 +139,18 @@ def error_handler(e):
 
 @socketio.on('connect')
 def initial_connection():
+
     print('A new client connect')
+
     response = DataRepository.read_device_state(4)
     print(response)
     emit('B2F_initial-valve-state', {'state': response['status']})
+
+    response = DataRepository.read_device_state(2)
+    print(response)
+    emit('B2F_initial-switch-state', {'state': response['status']})
+    global emergency_stop
+    emergency_stop = response['status']
 
 
 @socketio.on('F2B_switch_valve')
@@ -154,8 +163,7 @@ def switch_valve(payload):
 
     response = DataRepository.read_device_state(4)
     new_state = response['status']
-    emit("B2F_switched_valve", {'state': new_state})
-
+    socketio.emit("B2F_switched_valve", {'state': new_state})
     valve_state = new_state
 
     if state == 0:
@@ -166,6 +174,8 @@ def switch_valve(payload):
 @socketio.on('F2B_shutdown')
 def shutdown(payload):
     print(payload)
+    global is_shutdowned
+    is_shutdowned = True
     shutdown_raspberry_pi()
 
 
@@ -232,6 +242,7 @@ def start_chrome_thread():
 def start_main_loop():
 
     global water_flow
+    global pulsen
     global valve_state
     global current_volume
     global min_volume
@@ -272,9 +283,10 @@ def start_main_loop():
                 DataRepository.insert_historiek(0, 4, 2, "vullen gestopt")
                 DataRepository.insert_historiek(
                     water_flow, 3, 1, "Hoeveelheid water bijgevuld")
-                water_flow = 0
                 prev_valve_state = valve_state
                 DataRepository.update_device_state(4, valve_state)
+                water_flow = 0
+                pulsen = 0
 
         GPIO.output(ventiel, valve_state)
         DataRepository.update_device_state(4, valve_state)
@@ -291,6 +303,9 @@ def start_main_thread():
 def start_lcd():
 
     global current_volume
+    global is_shutdowned
+    global lcd_state
+    global emergency_stop
 
     prev_lcd_state = 0
     rotary.counter = 1
@@ -312,32 +327,52 @@ def start_lcd():
             prev_counter = rotary.counter
 
         # lcd states
-        if rotary.counter == 1:
-            if rotary.counter != prev_lcd_state:
-                prev_lcd_state = rotary.counter
+        if(not emergency_stop):
+            lcd_state = rotary.counter
+
+        print(lcd_state)
+
+        if (lcd_state == 1) and (is_shutdowned == False):
+            if lcd_state != prev_lcd_state:
                 schrijf_ip_naar_display()
+                prev_lcd_state = lcd_state
             else:
                 lcd.shift_canvas_left()
 
-        elif rotary.counter == 2:
+        elif lcd_state == 2:
 
-            if rotary.counter != prev_lcd_state:
-                prev_lcd_state = rotary.counter
+            if lcd_state != prev_lcd_state:
                 lcd.clear_display()
                 lcd.write_message("Water volume:")
                 lcd.enter()
                 lcd.write_message(f"{str(round(current_volume, 1))} liter")
+                prev_lcd_state = lcd_state
             else:
                 show_current_volume()
 
-        elif rotary.counter == 3:
-            if rotary.counter != prev_lcd_state:
-                prev_lcd_state = rotary.counter
+        elif lcd_state == 3:
+            if lcd_state != prev_lcd_state:
                 lcd.clear_display()
                 lcd.write_message("Uitschakelen ?")
+                prev_lcd_state = lcd_state
 
             if rotary.switch_is_pressed():
+                is_shutdowned = True
                 shutdown_raspberry_pi()
+        elif lcd_state == 4:
+            if lcd_state != prev_lcd_state:
+                lcd.clear_display()
+                lcd.write_message("Vergrendeld... druk om te ontgrendelen")
+                prev_lcd_state = lcd_state
+            else:
+                lcd.shift_canvas_left()
+                if rotary.switch_is_pressed():
+                    emergency_stop = 0
+                    lcd_state = 1
+                    DataRepository.insert_historiek(
+                        0, 2, 1, "noodstop ontgrendeld")
+                    DataRepository.update_device_state(2, 0)
+                    socketio.emit("B2F_unlock_emergency_stop", {"status":"unlocked"})
 
 
 def start_lcd_thread():
@@ -369,7 +404,7 @@ def setup():
     GPIO.setup(rs_pin, GPIO.OUT)
     GPIO.setup(E_pin, GPIO.OUT)
 
-    DataRepository.update_device_state(2, 0)
+    set_emergency_stop()
 
     lcd.init_LCD()
     lcd.set_cursor(0)
@@ -458,6 +493,17 @@ def get_current_config():
 
     return {'min': min_volume, 'max': max_volume}
 
+
+def set_emergency_stop():
+    response = DataRepository.read_device_state(2)
+    print(response)
+    global emergency_stop
+    global lcd_state
+    emergency_stop = response['status']
+    if(emergency_stop == 1):
+        lcd_state = 4
+
+
 # endregion
 
 # region CALLBACKS
@@ -468,18 +514,20 @@ def flow_puls_callback(pin):
     global water_flow
     pulsen += 1
 
-    water_flow = pulsen * 2.25
-
+    # standaard waarde : 2.25
+    water_flow = pulsen * 4
     print(f"FLOW : {water_flow} ml")
 
 
 def max_level_callback(pin):
-
     global emergency_stop
+    global lcd_state
     print("ALERT: Max level detected!")
     emergency_stop = True
     DataRepository.insert_historiek(1, 2, 1, "Max level detected")
     DataRepository.update_device_state(2, 1)
+    socketio.emit('B2F_max_level_detected', {"status": "gestopt"})
+    lcd_state = 4
 
 
 # endregion
