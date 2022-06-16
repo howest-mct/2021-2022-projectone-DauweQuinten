@@ -25,6 +25,7 @@ is_shutdowned = False
 # lcd
 rs_pin = 24
 E_pin = 23
+lcd_state = 1
 lcd = i2c_LCD(0x20, rs_pin, E_pin)
 
 
@@ -131,7 +132,6 @@ def get_configuration():
 
 # region sockets
 
-
 @socketio.on_error()        # Handles the default namespace
 def error_handler(e):
     print(e)
@@ -139,10 +139,18 @@ def error_handler(e):
 
 @socketio.on('connect')
 def initial_connection():
+
     print('A new client connect')
+
     response = DataRepository.read_device_state(4)
     print(response)
     emit('B2F_initial-valve-state', {'state': response['status']})
+
+    response = DataRepository.read_device_state(2)
+    print(response)
+    emit('B2F_initial-switch-state', {'state': response['status']})
+    global emergency_stop
+    emergency_stop = response['status']
 
 
 @socketio.on('F2B_switch_valve')
@@ -296,6 +304,8 @@ def start_lcd():
 
     global current_volume
     global is_shutdowned
+    global lcd_state
+    global emergency_stop
 
     prev_lcd_state = 0
     rotary.counter = 1
@@ -317,7 +327,10 @@ def start_lcd():
             prev_counter = rotary.counter
 
         # lcd states
-        lcd_state = rotary.counter
+        if(not emergency_stop):
+            lcd_state = rotary.counter
+
+        print(lcd_state)
 
         if (lcd_state == 1) and (is_shutdowned == False):
             if lcd_state != prev_lcd_state:
@@ -346,6 +359,20 @@ def start_lcd():
             if rotary.switch_is_pressed():
                 is_shutdowned = True
                 shutdown_raspberry_pi()
+        elif lcd_state == 4:
+            if lcd_state != prev_lcd_state:
+                lcd.clear_display()
+                lcd.write_message("Vergrendeld... druk om te ontgrendelen")
+                prev_lcd_state = lcd_state
+            else:
+                lcd.shift_canvas_left()
+                if rotary.switch_is_pressed():
+                    emergency_stop = 0
+                    lcd_state = 1
+                    DataRepository.insert_historiek(
+                        0, 2, 1, "noodstop ontgrendeld")
+                    DataRepository.update_device_state(2, 0)
+                    socketio.emit("B2F_unlock_emergency_stop", {"status":"unlocked"})
 
 
 def start_lcd_thread():
@@ -377,7 +404,7 @@ def setup():
     GPIO.setup(rs_pin, GPIO.OUT)
     GPIO.setup(E_pin, GPIO.OUT)
 
-    DataRepository.update_device_state(2, 0)
+    set_emergency_stop()
 
     lcd.init_LCD()
     lcd.set_cursor(0)
@@ -466,6 +493,17 @@ def get_current_config():
 
     return {'min': min_volume, 'max': max_volume}
 
+
+def set_emergency_stop():
+    response = DataRepository.read_device_state(2)
+    print(response)
+    global emergency_stop
+    global lcd_state
+    emergency_stop = response['status']
+    if(emergency_stop == 1):
+        lcd_state = 4
+
+
 # endregion
 
 # region CALLBACKS
@@ -482,12 +520,14 @@ def flow_puls_callback(pin):
 
 
 def max_level_callback(pin):
-
     global emergency_stop
+    global lcd_state
     print("ALERT: Max level detected!")
     emergency_stop = True
     DataRepository.insert_historiek(1, 2, 1, "Max level detected")
     DataRepository.update_device_state(2, 1)
+    socketio.emit('B2F_max_level_detected', {"status": "gestopt"})
+    lcd_state = 4
 
 
 # endregion

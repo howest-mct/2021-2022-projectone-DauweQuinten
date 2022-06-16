@@ -739,10 +739,33 @@ a:focus {
 }
 
 
+/*
+    Component: c-emergency
+    ---
+    melding bij max niveau detectie
+*/
+
+.c-emergency{
+    padding: 16px;
+    color: red;
+    border-color: red;
+    border-style: solid;
+    border-width: 2px;
+    text-align: center;
+}
+
+
+
 
 /*------------------------------------*\
   #UTILITIES
 \*------------------------------------*/
+
+
+.u-hide{
+    display: none;
+}
+
 
 /*
     Utilities: spacing
