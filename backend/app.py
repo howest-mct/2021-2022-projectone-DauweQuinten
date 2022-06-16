@@ -20,6 +20,7 @@ from selenium import webdriver
 
 # region global code voor Hardware
 ser = serial.Serial('/dev/ttyS0')
+is_shutdowned = False
 
 # lcd
 rs_pin = 24
@@ -165,6 +166,8 @@ def switch_valve(payload):
 @socketio.on('F2B_shutdown')
 def shutdown(payload):
     print(payload)
+    global is_shutdowned
+    is_shutdowned = True
     shutdown_raspberry_pi()
 
 
@@ -292,6 +295,7 @@ def start_main_thread():
 def start_lcd():
 
     global current_volume
+    global is_shutdowned
 
     prev_lcd_state = 0
     rotary.counter = 1
@@ -313,31 +317,34 @@ def start_lcd():
             prev_counter = rotary.counter
 
         # lcd states
-        if rotary.counter == 1:
-            if rotary.counter != prev_lcd_state:
-                prev_lcd_state = rotary.counter
+        lcd_state = rotary.counter
+
+        if (lcd_state == 1) and (is_shutdowned == False):
+            if lcd_state != prev_lcd_state:
                 schrijf_ip_naar_display()
+                prev_lcd_state = lcd_state
             else:
                 lcd.shift_canvas_left()
 
-        elif rotary.counter == 2:
+        elif lcd_state == 2:
 
-            if rotary.counter != prev_lcd_state:
-                prev_lcd_state = rotary.counter
+            if lcd_state != prev_lcd_state:
                 lcd.clear_display()
                 lcd.write_message("Water volume:")
                 lcd.enter()
                 lcd.write_message(f"{str(round(current_volume, 1))} liter")
+                prev_lcd_state = lcd_state
             else:
                 show_current_volume()
 
-        elif rotary.counter == 3:
-            if rotary.counter != prev_lcd_state:
-                prev_lcd_state = rotary.counter
+        elif lcd_state == 3:
+            if lcd_state != prev_lcd_state:
                 lcd.clear_display()
                 lcd.write_message("Uitschakelen ?")
+                prev_lcd_state = lcd_state
 
             if rotary.switch_is_pressed():
+                is_shutdowned = True
                 shutdown_raspberry_pi()
 
 
