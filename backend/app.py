@@ -231,6 +231,7 @@ def start_chrome_thread():
 def start_main_loop():
 
     global water_flow
+    global pulsen
     global valve_state
     global current_volume
     global min_volume
@@ -271,9 +272,10 @@ def start_main_loop():
                 DataRepository.insert_historiek(0, 4, 2, "vullen gestopt")
                 DataRepository.insert_historiek(
                     water_flow, 3, 1, "Hoeveelheid water bijgevuld")
-                water_flow = 0
                 prev_valve_state = valve_state
                 DataRepository.update_device_state(4, valve_state)
+                water_flow = 0
+                pulsen = 0
 
         GPIO.output(ventiel, valve_state)
         DataRepository.update_device_state(4, valve_state)
@@ -467,9 +469,9 @@ def flow_puls_callback(pin):
     global water_flow
     pulsen += 1
 
-    water_flow = pulsen * 2.25
-
-    # print(f"FLOW : {water_flow} ml")
+    # standaard waarde : 2.25
+    water_flow = pulsen * 4
+    print(f"FLOW : {water_flow} ml")
 
 
 def max_level_callback(pin):
