@@ -57,23 +57,35 @@
         </li>
       </ul>
     </header>
-    <div class="o-container">
+    <div class="o-container o-section o-section--lg">
       <div class="o-row">
-        <input
-          type="datetime-local"
-          name="start-time"
-          id=""
-          class="js-start-time"
-        />
-        <input
-          type="datetime-local"
-          name="end-time"
-          id=""
-          class="js-end-time"
-        />
-        <button class="js-submit">submit</button>
+        <div class="c-form c-form--date">
+          <label for="start-date" class="c-form__item">van:</label>
+          <input
+            type="datetime-local"
+            name="start-time"
+            id="start-date"
+            class="js-start-time c-form__item"
+          />
+          <label for="end-date" class="c-form__item">tot:</label>
+          <input
+            type="datetime-local"
+            name="end-time"
+            id="end-date"
+            class="js-end-time c-form__item"
+          />
+          <button class="js-submit c-form__btn">teken grafieken</button>
+        </div>
       </div>
-      <div class="js-stats-chart c-chart"></div>
+    </div>
+    <div class="o-container o-section o-section--lg">
+      <div class="o-row">
+        <div class="o-layout o-layout--align-center">
+          <div class="o-layout__item">
+            <div class="js-stats-chart c-chart"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </body>
 </html>

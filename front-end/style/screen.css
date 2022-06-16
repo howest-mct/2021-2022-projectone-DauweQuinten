@@ -237,7 +237,7 @@ a:focus {
     margin-left: auto;
     margin-right: auto;
     width: 100%;
-    max-width: 90em; /* 90 * 16px = 1440px */
+    max-width: 50em; /* 90 * 16px = 1440px */
 }
 
 /*
@@ -465,11 +465,30 @@ a:focus {
     padding: 32px;
 }
 
+.c-form--date{
+    margin: 16px auto;
+}
+
+@media(max-width: 1014px){
+
+    .c-form--date{
+        margin: 16px auto;
+    }
+    .c-form--date .c-form__item{
+        align-self: center;
+    }
+}
+
 .c-form__item{
     display: block;
     width: 100%;
-    padding: 4px;
+    padding: 4px;   
 }
+
+.c-form__object + .c-form__object{
+    padding-top: 16px;
+}
+
 
 .c-form__btn{
     margin-top: 32px;
@@ -538,7 +557,7 @@ a:focus {
     margin-right: 20px;
 }
 
-@media(max-width: 858px){
+@media(max-width: 1014px){
     .c-nav{
         position: fixed;
         z-index: 1;
@@ -571,7 +590,7 @@ a:focus {
     transition: 0.5s;
 }
 
-@media(max-width: 858px){
+@media(max-width: 1014px){
     .c-nav__link.active, .c-nav__link:hover{
         background: none;
         color: #20B9FF
@@ -584,7 +603,7 @@ a:focus {
     line-height: 80px;
 }
 
-@media(max-width: 858px){
+@media(max-width: 1014px){
     .c-nav__item{
         display: block;
     }
@@ -602,10 +621,18 @@ a:focus {
     padding: 0 50px;
 }
 
-@media(max-width: 858px){
+
+@media(max-width: 448px){
     .c-logo{
         padding: 25px;
         font-size: 32px;
+    }
+}
+
+@media(max-width: 366px){
+    .c-logo{
+        padding: 25px;
+        font-size: 18px;
     }
 }
 
@@ -626,7 +653,7 @@ a:focus {
     display: None;
 }
 
-@media(max-width: 858px){
+@media(max-width: 1014px){
     .c-hamburger{
         display: block
     }
@@ -695,7 +722,7 @@ a:focus {
 
 
 .c-chart{
-    max-width: 1080px;
+    margin-bottom: 32px;
 }
 
 

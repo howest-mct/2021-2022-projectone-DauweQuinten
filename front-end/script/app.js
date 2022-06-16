@@ -181,6 +181,11 @@ const drawStats = function () {
       id: 'chart',
       type: 'line',
     },
+    yaxis: {
+      title: {
+        text: 'volume (liter)',
+      },
+    },
     stroke: {
       curve: 'smooth',
     },
@@ -189,17 +194,17 @@ const drawStats = function () {
     },
     series: [
       {
-        name: 'Water volume',
+        name: 'water volume',
         data: [],
       },
     ],
     labels: [],
     noData: {
-      text: 'Geen data gevonden tussen de 2 geselecteerde periodes...',
+      text: 'Geen data gevonden...',
     },
     title: {
-      text: 'Water volume',
-      align: 'left',
+      text: 'water volume (liter)',
+      align: 'center',
       margin: 10,
       offsetX: 0,
       offsetY: 0,
