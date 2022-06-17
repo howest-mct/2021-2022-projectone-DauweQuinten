@@ -1,19 +1,17 @@
-import time
-import serial
-from RPi import GPIO
-
-from helpers.i2c_LCD import i2c_LCD
-from helpers.Rotary import Rotary
-
-import threading
-import subprocess
-from flask_cors import CORS
-from flask_socketio import SocketIO, emit, send
-from flask import Flask, jsonify, request
-from repositories.DataRepository import DataRepository
-
-
 from selenium import webdriver
+from repositories.DataRepository import DataRepository
+from flask import Flask, jsonify, request
+from flask_socketio import SocketIO, emit, send
+from flask_cors import CORS
+import subprocess
+import threading
+from helpers.Rotary import Rotary
+from helpers.i2c_LCD import i2c_LCD
+from RPi import GPIO
+import serial
+import time
+
+
 # from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
 
@@ -21,6 +19,7 @@ from selenium import webdriver
 # region global code voor Hardware
 ser = serial.Serial('/dev/ttyS0')
 is_shutdowned = False
+
 
 # lcd
 rs_pin = 24
@@ -332,49 +331,48 @@ def start_lcd():
 
         print(lcd_state)
 
-        if is_shutdowned == False:
+        if (lcd_state == 1) and (is_shutdowned == False):
+            if lcd_state != prev_lcd_state:
+                schrijf_ip_naar_display()
+                prev_lcd_state = lcd_state
+            else:
+                lcd.shift_canvas_left()
 
-            if lcd_state == 1:
-                if lcd_state != prev_lcd_state:
-                    lcd.clear_display()
-                    lcd.write_message("Water volume:")
-                    lcd.enter()
-                    lcd.write_message(f"{str(round(current_volume, 1))} liter")
-                    prev_lcd_state = lcd_state
-                else:
-                    show_current_volume()
+        elif lcd_state == 2:
 
-            elif lcd_state == 2:
-                if lcd_state != prev_lcd_state:
-                    schrijf_ip_naar_display()
-                    prev_lcd_state = lcd_state
-                else:
-                    lcd.shift_canvas_left()
+            if lcd_state != prev_lcd_state:
+                lcd.clear_display()
+                lcd.write_message("Water volume:")
+                lcd.enter()
+                lcd.write_message(f"{str(round(current_volume, 1))} liter")
+                prev_lcd_state = lcd_state
+            else:
+                show_current_volume()
 
-            elif lcd_state == 3:
-                if lcd_state != prev_lcd_state:
-                    lcd.clear_display()
-                    lcd.write_message("Uitschakelen ?")
-                    prev_lcd_state = lcd_state
+        elif lcd_state == 3:
+            if lcd_state != prev_lcd_state:
+                lcd.clear_display()
+                lcd.write_message("Uitschakelen ?")
+                prev_lcd_state = lcd_state
 
+            if rotary.switch_is_pressed():
+                is_shutdowned = True
+                shutdown_raspberry_pi()
+        elif lcd_state == 4:
+            if lcd_state != prev_lcd_state:
+                lcd.clear_display()
+                lcd.write_message("Vergrendeld... druk om te ontgrendelen")
+                prev_lcd_state = lcd_state
+            else:
+                lcd.shift_canvas_left()
                 if rotary.switch_is_pressed():
-                    is_shutdowned = True
-                    shutdown_raspberry_pi()
-            elif lcd_state == 4:
-                if lcd_state != prev_lcd_state:
-                    lcd.clear_display()
-                    lcd.write_message("Vergrendeld... druk om te ontgrendelen")
-                    prev_lcd_state = lcd_state
-                else:
-                    lcd.shift_canvas_left()
-                    if rotary.switch_is_pressed():
-                        emergency_stop = 0
-                        lcd_state = 1
-                        DataRepository.insert_historiek(
-                            0, 2, 1, "noodstop ontgrendeld")
-                        DataRepository.update_device_state(2, 0)
-                        socketio.emit("B2F_unlock_emergency_stop",
-                                      {"status": "unlocked"})
+                    emergency_stop = 0
+                    lcd_state = 1
+                    DataRepository.insert_historiek(
+                        0, 2, 1, "noodstop ontgrendeld")
+                    DataRepository.update_device_state(2, 0)
+                    socketio.emit("B2F_unlock_emergency_stop",
+                                  {"status": "unlocked"})
 
 
 def start_lcd_thread():
@@ -456,7 +454,14 @@ def get_ip_string(interface):
     return f"{interface}: {ip}"
 
 
-# display state 1: show current water volume
+# display state 1: Schrijf ip-adressen naar de display
+def schrijf_ip_naar_display():
+    lcd.clear_display()
+    wlan0 = get_ip_string('wlan0')
+    lcd.write_message(wlan0)
+
+
+# display state 2: show current water volume
 def show_current_volume():
     global current_volume
     global prev_volume
@@ -465,14 +470,6 @@ def show_current_volume():
         lcd.enter()
         lcd.write_message(f"{str(round(current_volume, 1))} liter")
         prev_volume = current_volume
-
-
-
-# display state 2: Schrijf ip-adressen naar de display
-def schrijf_ip_naar_display():
-    lcd.clear_display()
-    wlan0 = get_ip_string('wlan0')
-    lcd.write_message(wlan0)
 
 
 def shutdown_raspberry_pi():
