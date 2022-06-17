@@ -333,15 +333,8 @@ def start_lcd():
         print(lcd_state)
 
         if is_shutdowned == False:
-            if (lcd_state == 1):
-                if lcd_state != prev_lcd_state:
-                    schrijf_ip_naar_display()
-                    prev_lcd_state = lcd_state
-                else:
-                    lcd.shift_canvas_left()
 
-            elif lcd_state == 2:
-
+            if lcd_state == 1:
                 if lcd_state != prev_lcd_state:
                     lcd.clear_display()
                     lcd.write_message("Water volume:")
@@ -350,6 +343,13 @@ def start_lcd():
                     prev_lcd_state = lcd_state
                 else:
                     show_current_volume()
+
+            elif lcd_state == 2:
+                if lcd_state != prev_lcd_state:
+                    schrijf_ip_naar_display()
+                    prev_lcd_state = lcd_state
+                else:
+                    lcd.shift_canvas_left()
 
             elif lcd_state == 3:
                 if lcd_state != prev_lcd_state:
@@ -456,14 +456,7 @@ def get_ip_string(interface):
     return f"{interface}: {ip}"
 
 
-# display state 1: Schrijf ip-adressen naar de display
-def schrijf_ip_naar_display():
-    lcd.clear_display()
-    wlan0 = get_ip_string('wlan0')
-    lcd.write_message(wlan0)
-
-
-# display state 2: show current water volume
+# display state 1: show current water volume
 def show_current_volume():
     global current_volume
     global prev_volume
@@ -472,6 +465,14 @@ def show_current_volume():
         lcd.enter()
         lcd.write_message(f"{str(round(current_volume, 1))} liter")
         prev_volume = current_volume
+
+
+
+# display state 2: Schrijf ip-adressen naar de display
+def schrijf_ip_naar_display():
+    lcd.clear_display()
+    wlan0 = get_ip_string('wlan0')
+    lcd.write_message(wlan0)
 
 
 def shutdown_raspberry_pi():
