@@ -332,47 +332,49 @@ def start_lcd():
 
         print(lcd_state)
 
-        if (lcd_state == 1) and (is_shutdowned == False):
-            if lcd_state != prev_lcd_state:
-                schrijf_ip_naar_display()
-                prev_lcd_state = lcd_state
-            else:
-                lcd.shift_canvas_left()
+        if is_shutdowned == False:
+            if (lcd_state == 1):
+                if lcd_state != prev_lcd_state:
+                    schrijf_ip_naar_display()
+                    prev_lcd_state = lcd_state
+                else:
+                    lcd.shift_canvas_left()
 
-        elif lcd_state == 2:
+            elif lcd_state == 2:
 
-            if lcd_state != prev_lcd_state:
-                lcd.clear_display()
-                lcd.write_message("Water volume:")
-                lcd.enter()
-                lcd.write_message(f"{str(round(current_volume, 1))} liter")
-                prev_lcd_state = lcd_state
-            else:
-                show_current_volume()
+                if lcd_state != prev_lcd_state:
+                    lcd.clear_display()
+                    lcd.write_message("Water volume:")
+                    lcd.enter()
+                    lcd.write_message(f"{str(round(current_volume, 1))} liter")
+                    prev_lcd_state = lcd_state
+                else:
+                    show_current_volume()
 
-        elif lcd_state == 3:
-            if lcd_state != prev_lcd_state:
-                lcd.clear_display()
-                lcd.write_message("Uitschakelen ?")
-                prev_lcd_state = lcd_state
+            elif lcd_state == 3:
+                if lcd_state != prev_lcd_state:
+                    lcd.clear_display()
+                    lcd.write_message("Uitschakelen ?")
+                    prev_lcd_state = lcd_state
 
-            if rotary.switch_is_pressed():
-                is_shutdowned = True
-                shutdown_raspberry_pi()
-        elif lcd_state == 4:
-            if lcd_state != prev_lcd_state:
-                lcd.clear_display()
-                lcd.write_message("Vergrendeld... druk om te ontgrendelen")
-                prev_lcd_state = lcd_state
-            else:
-                lcd.shift_canvas_left()
                 if rotary.switch_is_pressed():
-                    emergency_stop = 0
-                    lcd_state = 1
-                    DataRepository.insert_historiek(
-                        0, 2, 1, "noodstop ontgrendeld")
-                    DataRepository.update_device_state(2, 0)
-                    socketio.emit("B2F_unlock_emergency_stop", {"status":"unlocked"})
+                    is_shutdowned = True
+                    shutdown_raspberry_pi()
+            elif lcd_state == 4:
+                if lcd_state != prev_lcd_state:
+                    lcd.clear_display()
+                    lcd.write_message("Vergrendeld... druk om te ontgrendelen")
+                    prev_lcd_state = lcd_state
+                else:
+                    lcd.shift_canvas_left()
+                    if rotary.switch_is_pressed():
+                        emergency_stop = 0
+                        lcd_state = 1
+                        DataRepository.insert_historiek(
+                            0, 2, 1, "noodstop ontgrendeld")
+                        DataRepository.update_device_state(2, 0)
+                        socketio.emit("B2F_unlock_emergency_stop",
+                                      {"status": "unlocked"})
 
 
 def start_lcd_thread():
