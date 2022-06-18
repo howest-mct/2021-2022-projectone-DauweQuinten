@@ -12,7 +12,7 @@ This way, your rainwater tank will never be out of water ever again!
 clone this repository on your raspberry pi
 <html>
  <code>
-   `git clone https://github.com/howest-mct/2021-2022-projectone-DauweQuinten.git`
+   git clone https://github.com/howest-mct/2021-2022-projectone-DauweQuinten.git
  </code>
 </html>
  
