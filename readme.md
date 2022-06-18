@@ -19,6 +19,8 @@ clone this repository on your raspberry pi
 <br>This repo is structured as mentioned below:
 - backend: This folder contains all the logic that keeps the program running.
 - database-export: This folder contains a dumb of the  SQL-database. We will import this database later.
+- fritzing-schema : Here you can find everything you need to build the electronic circuit. 
+- front-end: In this folder you'll find all the code that makes up the website. 
 
 ## Inhoud
 Zoals je kan zien is er geen "vaste" structuur voor zo'n document. Je bepaalt zelf hoe je het bestand via markdown structureert. Zorg ervoor dat het document minimaal op volgende vragen een antwoord biedt.
