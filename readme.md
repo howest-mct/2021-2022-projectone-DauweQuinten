@@ -91,7 +91,8 @@ Now you have to restart the server:
     service apache2 restart
     
 Now open this file:
-    nano /etc/apache2/apache2.conf
+     
+     nano /etc/apache2/apache2.conf
     
  search for the text below:
  
@@ -125,16 +126,12 @@ You should get the output below:
     Loaded: loaded (/lib/systemd/system/apache2.service; enabled; vendor preset:enabled)
     Active: active (running) since ...
 
+Now it's time to surf to your IP-address. You can find your IP-address by typing the command below in your terminal:
+
+    ifconfig
+
+You should see the home page of this project.
 
 
-## Inhoud
-Zoals je kan zien is er geen "vaste" structuur voor zo'n document. Je bepaalt zelf hoe je het bestand via markdown structureert. Zorg ervoor dat het document minimaal op volgende vragen een antwoord biedt.
-
-- Wat is de structuur van het project?
-- Wat moet er gebeuren met de database? Hoe krijgt de persoon dit up and running?
-- Moeten er settings worden veranderd in de backend code voor de database? 
-- Runt de back- en front-end code direct? Of moeten er nog commando's worden ingegeven?
-- Zijn er poorten die extra aandacht vereisen in de back- en/of front-end code?
-  
 ## Instructables
 Plaats zeker een link naar de Instructables zodat het project kan nagebouwd worden!
