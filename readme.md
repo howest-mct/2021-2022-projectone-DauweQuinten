@@ -9,7 +9,7 @@ This way, your rainwater tank will never be out of water ever again!
 
 ## Setting things up
 ### clone the repository above
-clone this repository on your raspberry pi. You can do this remotely with the help of a text editor like Visual Studio Code or with the clone command in the terminal
+clone this repository on your raspberry pi
 `git clone https://github.com/howest-mct/2021-2022-projectone-DauweQuinten.git`
  
 This repo is structured as mentioned below:
