@@ -8,8 +8,8 @@ The water level of a tank is continuously measured by an ultrasonic sensor. Afte
 This way, your rainwater tank will never be out of water ever again!
 
 ## Setting things up
-### clone the repository
-clone this repository on your raspberry pi
+### Clone the repository
+clone this repository on your Raspberry Pi
 <html>
  <code>
    git clone https://github.com/howest-mct/2021-2022-projectone-DauweQuinten.git
@@ -21,6 +21,20 @@ clone this repository on your raspberry pi
 - database-export: This folder contains a dumb of the  SQL-database. We will import this database later.
 - fritzing-schema : Here you can find everything you need to build the electronic circuit. 
 - front-end: In this folder you'll find all the code that makes up the website. 
+
+
+### Import the database
+Now you're ready to import the sql-database.<br>
+- Open mySQL Workbench and make a new connection with your Raspberry Pi. Your Raspberry Pi will need MariaDB for this project.
+- Install MariaDB
+<html>
+ <code>
+   apt install mariadb-server mariadb-client -y
+ </code>
+</html></br>
+- Open the dumb file of the database en click on execute script
+- If everyting goes as expected, your database will now be imported! 
+
 
 ## Inhoud
 Zoals je kan zien is er geen "vaste" structuur voor zo'n document. Je bepaalt zelf hoe je het bestand via markdown structureert. Zorg ervoor dat het document minimaal op volgende vragen een antwoord biedt.
