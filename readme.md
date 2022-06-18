@@ -7,7 +7,7 @@ The water level of a tank is continuously measured by an ultrasonic sensor. Afte
 
 This way, you will never be out of rain water ever again! 
 
-
+## Setting some things up
 Hoe kan een externe persoon (die niets weet over de "ProjectOne" opdracht) het project snel runnen op de eigen pc?
 Op github vind je verschillende voorbeelden hoe je een readme.md bestand kan structureren.
 - [Voorbeeld 1](https://github.com/othneildrew/Best-README-Template)
