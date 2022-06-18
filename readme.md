@@ -69,7 +69,6 @@ Install python by going to the extensions tab of Visual Studio Code. Search for 
 - `pip install mysql-connector-python`
 - `pip install gevent`
 - `pip install gevent-websocket`
-- 
 ### Run app.py
 
 Now you can start the backend by running the file "app.py". You can find this file in the backend folder. You will have some errors if you haven't installed the sensors yet. Those errors should be fixed once every device is connected. You can find the electronic schematics in the "fritzing-schema" folder
