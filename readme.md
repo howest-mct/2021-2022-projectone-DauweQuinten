@@ -10,7 +10,11 @@ This way, your rainwater tank will never be out of water ever again!
 ## Setting things up
 ### clone the repository above
 clone this repository on your raspberry pi
-<code>`git clone https://github.com/howest-mct/2021-2022-projectone-DauweQuinten.git`</code>
+<html>
+ <code>
+   `git clone https://github.com/howest-mct/2021-2022-projectone-DauweQuinten.git`
+ </code>
+</html>
  
 This repo is structured as mentioned below:
 - backend: This folder contains all the logic that keeps the program running.
