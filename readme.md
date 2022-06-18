@@ -8,7 +8,7 @@ The water level of a tank is continuously measured by an ultrasonic sensor. Afte
 This way, your rainwater tank will never be out of water ever again!
 
 ## Setting things up
-### clone the repository above
+### clone the repository
 clone this repository on your raspberry pi
 <html>
  <code>
