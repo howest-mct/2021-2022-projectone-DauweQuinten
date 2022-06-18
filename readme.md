@@ -10,11 +10,9 @@ This way, your rainwater tank will never be out of water ever again!
 ## Setting things up
 ### Clone the repository
 clone this repository on your Raspberry Pi
-<html>
- <code>
-   git clone https://github.com/howest-mct/2021-2022-projectone-DauweQuinten.git
- </code>
-</html>
+
+    git clone https://github.com/howest-mct/2021-2022-projectone-DauweQuinten.git
+
  
 <br>This repo is structured as mentioned below:
 - backend: This folder contains all the logic that keeps the program running.
@@ -25,11 +23,8 @@ clone this repository on your Raspberry Pi
 
 ### Install MariaDB
 
-<html>
- <code>
-   apt install mariadb-server mariadb-client -y
- </code>
-</html>
+    apt install mariadb-server mariadb-client -y
+
 
 ### Import the database
 Now you're ready to import the sql-database. Open mySQL Workbench and make a new connection with your Raspberry Pi.
@@ -37,8 +32,25 @@ Now you're ready to import the sql-database. Open mySQL Workbench and make a new
 <br>If everyting goes as expected, your database will now be imported! 
 
 
-### change 
+### Database configuration
+<br>Make a new file named "config.py" and insert the code below.
 
+    [connector_python]
+    user = USER_HERE
+    host = 127.0.0.1
+    port = 3306
+    password = PWD_HERE
+    database = DATABASENAME_HERE
+
+    [application_config]
+    driver = 'SQL Server'
+
+Edit the code ebove so it matches your configuration:
+- user
+- host
+- password
+- database name
+ 
 ### Install Apache
 
 <html>
@@ -47,6 +59,9 @@ Now you're ready to import the sql-database. Open mySQL Workbench and make a new
  </code>
 </html>
 
+### Install python
+Install python by going to the extensions tab of Visual Studio Code. Search for  "python" and click on "install on *your IP-address*".
+
 ### Install Python packages
 
 - `pip install flask-cors`
@@ -54,6 +69,62 @@ Now you're ready to import the sql-database. Open mySQL Workbench and make a new
 - `pip install mysql-connector-python`
 - `pip install gevent`
 - `pip install gevent-websocket`
+- 
+### Run app.py
+
+Now you can start the backend by running the file "app.py". You can find this file in the backend folder. You will have some errors if you haven't installed the sensors yet. Those errors should be fixed once every device is connected. You can find the electronic schematics in the "fritzing-schema" folder
+
+### setup Apache server
+
+Open the file below
+
+    nano /etc/apache2/sites-available/000-default.conf
+    
+Search for the line `DocumentRoot /var/www/html` en change it as below
+
+    DocumentRoot/home/<username>/<name_of_your_repo>/front-end
+
+Close and save the file.
+
+Now you have to restart the server:
+
+    service apache2 restart
+    
+Now open this file:
+    nano /etc/apache2/apache2.conf
+    
+ search for the text below:
+ 
+    <Directory />
+      Options FollowSymLinks
+      AllowOverride All
+      Require all denied
+    </Directory>
+ 
+ and change it to:
+ 
+    <Directory />
+      Options Indexes FollowSymLinks Includes ExecCGI
+      AllowOverride All
+      Require all granted
+    </Directory>
+
+
+Close and save the file.
+
+Now you have to restart the server again:
+
+    service apache2 restart
+
+check if the server is up and running:
+
+    service apache2 status
+
+You should get the output below:
+
+    Loaded: loaded (/lib/systemd/system/apache2.service; enabled; vendor preset:enabled)
+    Active: active (running) since ...
+
 
 
 ## Inhoud
