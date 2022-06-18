@@ -8,8 +8,13 @@ The water level of a tank is continuously measured by an ultrasonic sensor. Afte
 This way, your rainwater tank will never be out of water ever again!
 
 ## Setting things up
-### clone the repo above
-Copy the 
+### clone the repository above
+clone this repository on your raspberry pi. You can do this remotely with the help of a text editor like Visual Studio Code or with the clone command in the terminal
+  - git clone {repository URL}
+ 
+This repo is structured as mentioned below:
+- backend: This folder contains all the logic that keeps the program running.
+- database-export: This folder contains a dumb of the  SQL-database. We will import this database later.
 
 ## Inhoud
 Zoals je kan zien is er geen "vaste" structuur voor zo'n document. Je bepaalt zelf hoe je het bestand via markdown structureert. Zorg ervoor dat het document minimaal op volgende vragen een antwoord biedt.
