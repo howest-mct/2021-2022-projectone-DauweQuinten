@@ -25,8 +25,8 @@ clone this repository on your Raspberry Pi
 
 ### Import the database
 Now you're ready to import the sql-database.<br>
-- Open mySQL Workbench and make a new connection with your Raspberry Pi. Your Raspberry Pi will need MariaDB for this project.
-- Install MariaDB
+Open mySQL Workbench and make a new connection with your Raspberry Pi. Your Raspberry Pi will need MariaDB for this project.
+Install MariaDB
 <html>
  <code>
    apt install mariadb-server mariadb-client -y
