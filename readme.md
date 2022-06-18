@@ -5,6 +5,12 @@
 Omschrijf het project. Doe dit in het markdown formaat.
 - [Syntax md](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax)
 
+A smart rainwater cistern keeps your rainwater tank from drying out. This IoT-system knows when your cistern is getting dry and will fill him automatically afterwards.
+
+The water level of a tank is continuously measured by an ultrasonic sensor. After a presed minimum level has been reached, an electro valve opens and water drink water starts streaming to your cistern. 
+
+This way, you will never be out of rain water ever again! 
+
 
 Hoe kan een externe persoon (die niets weet over de "ProjectOne" opdracht) het project snel runnen op de eigen pc?
 Op github vind je verschillende voorbeelden hoe je een readme.md bestand kan structureren.
