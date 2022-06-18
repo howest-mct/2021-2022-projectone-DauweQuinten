@@ -24,20 +24,28 @@ clone this repository on your Raspberry Pi
 
 
 ### Import the database
-Now you're ready to import the sql-database.
+Now you're ready to import the sql-database. Open mySQL Workbench and make a new connection with your Raspberry Pi.
+<br><br>Your Raspberry Pi will need MariaDB for this project.
 
-<br>Open mySQL Workbench and make a new connection with your Raspberry Pi. Your Raspberry Pi will need MariaDB for this project.<br>
-Install MariaDB
+<br>Install MariaDB
 <html>
  <code>
    apt install mariadb-server mariadb-client -y
  </code>
 </html>
 
-<br>
-- Open the dumb file of the database en click on execute script
-- If everyting goes as expected, your database will now be imported! 
 
+<br><br>Open the dumb file of the database en click on execute script
+<br><br>If everyting goes as expected, your database will now be imported! 
+
+
+### Install Apache
+<br>Install Apache webserver
+<html>
+ <code>
+   apt install Apache2 -y
+ </code>
+</html>
 
 ## Inhoud
 Zoals je kan zien is er geen "vaste" structuur voor zo'n document. Je bepaalt zelf hoe je het bestand via markdown structureert. Zorg ervoor dat het document minimaal op volgende vragen een antwoord biedt.
