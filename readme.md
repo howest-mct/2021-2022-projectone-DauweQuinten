@@ -16,7 +16,7 @@ clone this repository on your raspberry pi
  </code>
 </html>
  
-This repo is structured as mentioned below:
+<br>This repo is structured as mentioned below:
 - backend: This folder contains all the logic that keeps the program running.
 - database-export: This folder contains a dumb of the  SQL-database. We will import this database later.
 
