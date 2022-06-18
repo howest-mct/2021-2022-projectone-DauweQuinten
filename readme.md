@@ -1,11 +1,11 @@
 # smart rainwater cistern
 
 ## About this project
-A smart rainwater cistern keeps your rainwater tank from drying out. This IoT-system knows when your cistern is getting dry and will fill him automatically afterwards.
+A smart rainwater cistern keeps your rainwater tank from drying out. This IoT-system knows when your cistern is getting empty and will fill him automatically afterwards.
 
 The water level of a tank is continuously measured by an ultrasonic sensor. After a preset value has been reached, an electro valve will open causing drinking water to stream into your cistern. 
 
-This way, you will never be out of rain water ever again! 
+This way, your rainwater tank will never be out of water ever again!
 
 ## Setting some things up
 Hoe kan een externe persoon (die niets weet over de "ProjectOne" opdracht) het project snel runnen op de eigen pc?
