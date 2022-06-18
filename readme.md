@@ -80,7 +80,7 @@ Open the file below
 
     nano /etc/apache2/sites-available/000-default.conf
     
-Search for the line `DocumentRoot /var/www/html` en change it as below
+Search for the line `DocumentRoot /var/www/html` and change it as shown below:
 
     DocumentRoot/home/<username>/<name_of_your_repo>/front-end
 
