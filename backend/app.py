@@ -332,14 +332,14 @@ def start_lcd():
 
         print(lcd_state)
 
-        if (lcd_state == 1) and (is_shutdowned == False):
+        if (lcd_state == 2) and (is_shutdowned == False):
             if lcd_state != prev_lcd_state:
                 schrijf_ip_naar_display()
                 prev_lcd_state = lcd_state
             else:
                 lcd.shift_canvas_left()
 
-        elif lcd_state == 2:
+        elif lcd_state == 1:
 
             if lcd_state != prev_lcd_state:
                 lcd.clear_display()
@@ -369,6 +369,7 @@ def start_lcd():
                 if rotary.switch_is_pressed():
                     emergency_stop = 0
                     lcd_state = 1
+                    rotary.counter = 1
                     DataRepository.insert_historiek(
                         0, 2, 1, "noodstop ontgrendeld")
                     DataRepository.update_device_state(2, 0)
