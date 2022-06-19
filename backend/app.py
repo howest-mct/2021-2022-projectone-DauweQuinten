@@ -1,17 +1,19 @@
-from selenium import webdriver
-from repositories.DataRepository import DataRepository
-from flask import Flask, jsonify, request
-from flask_socketio import SocketIO, emit, send
-from flask_cors import CORS
-import subprocess
-import threading
-from helpers.Rotary import Rotary
-from helpers.i2c_LCD import i2c_LCD
-from RPi import GPIO
-import serial
 import time
+import serial
+from RPi import GPIO
+
+from helpers.i2c_LCD import i2c_LCD
+from helpers.Rotary import Rotary
+
+import threading
+import subprocess
+from flask_cors import CORS
+from flask_socketio import SocketIO, emit, send
+from flask import Flask, jsonify, request
+from repositories.DataRepository import DataRepository
 
 
+from selenium import webdriver
 # from selenium import webdriver
 # from selenium.webdriver.chrome.options import Options
 
@@ -19,7 +21,6 @@ import time
 # region global code voor Hardware
 ser = serial.Serial('/dev/ttyS0')
 is_shutdowned = False
-
 
 # lcd
 rs_pin = 24
@@ -331,14 +332,14 @@ def start_lcd():
 
         print(lcd_state)
 
-        if (lcd_state == 2) and (is_shutdowned == False):
+        if (lcd_state == 1) and (is_shutdowned == False):
             if lcd_state != prev_lcd_state:
                 schrijf_ip_naar_display()
                 prev_lcd_state = lcd_state
             else:
                 lcd.shift_canvas_left()
 
-        elif lcd_state == 1:
+        elif lcd_state == 2:
 
             if lcd_state != prev_lcd_state:
                 lcd.clear_display()
