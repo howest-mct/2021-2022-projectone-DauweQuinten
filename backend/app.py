@@ -343,9 +343,9 @@ def start_lcd():
 
             if lcd_state != prev_lcd_state:
                 lcd.clear_display()
-                lcd.write_message("Water volume:")
+                lcd.write_message("Volume (liter):")
                 lcd.enter()
-                lcd.write_message(f"{str(round(current_volume, 1))} liter")
+                lcd.write_message(f"{str(round(current_volume, 1))}")
                 prev_lcd_state = lcd_state
             else:
                 show_current_volume()
@@ -470,7 +470,7 @@ def show_current_volume():
 
     if not (prev_volume - 0.2) < current_volume < (prev_volume + 0.2):
         lcd.enter()
-        lcd.write_message(f"{str(round(current_volume, 1))} liter")
+        lcd.write_message(f"{str(round(current_volume, 1))}")
         prev_volume = current_volume
 
 
@@ -481,7 +481,11 @@ def shutdown_raspberry_pi():
     lcd.enter()
     lcd.write_message('Bye!')
     time.sleep(2)
+    GPIO.output(ventiel, 0)
     lcd.clear_display()
+    ser.close()
+    lcd.shutdown()
+    GPIO.cleanup()
     subprocess.Popen(['sudo', 'shutdown', '-h', 'now'])
     exit(0)
 
@@ -516,9 +520,7 @@ def flow_puls_callback(pin):
     global water_flow
     pulsen += 1
 
-    # standaard waarde : 2.25
-    water_flow = pulsen * 4
-    print(f"FLOW : {water_flow} ml")
+    water_flow = pulsen * 2.25
 
 
 def max_level_callback(pin):
@@ -550,6 +552,7 @@ if __name__ == '__main__':
     finally:
         GPIO.output(ventiel, 0)
         lcd.shutdown()
+        ser.close()
         GPIO.cleanup()
 
 # endregion
